@@ -1,0 +1,13 @@
+.loginheading{
+    font-size: 33px;
+    font-family: var(--open);
+    color: var(--primary);
+    font-weight: 700;
+}
+.logingoogle{
+    color: var(--primary);
+    font-size: 13px;
+    font-family: var(--open);
+    font-weight: 600;
+    letter-spacing: 0.267px;
+}
