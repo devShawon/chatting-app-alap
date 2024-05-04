@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './auth.css'
 
 import Box from '@mui/material/Box';
@@ -14,6 +14,8 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import HyperLink from '../../components/utilities/HyperLink';
+import { IoEyeOutline } from "react-icons/io5";
+import { FaRegEyeSlash } from "react-icons/fa6";
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -28,6 +30,17 @@ const ColorButton = styled(Button)(() => ({
 }));
 
 const Login = () => {
+
+  let [show, setShow] = useState(true)
+
+  let handlePassShow = () => {
+    if(show){
+      setShow(false)
+    }else{
+      setShow(true)
+    }
+  }
+
   return (
     <>
         <Box sx={{ flexGrow: 1 }}>
@@ -51,8 +64,17 @@ const Login = () => {
                     </div>
                       <form action="" method=''>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
-                          <TextField id="standard-basic" placeholder='Youraddres@email.com' label="Email Address" variant="standard" style={{width: '372px', marginTop: '32px'}} />
-                          <TextField id="standard-basic" placeholder='Enter your password' label="password" variant="standard" style={{marginTop: '60px', placeholderTextColor: 'red'}}/>
+                          <TextField id="standard-basic" placeholder='Youraddres@email.com' label="Email Address" variant="standard" style={{width: '372px', marginTop: '32px',}} />
+                          <div style={{position: 'relative',}}>
+                            <TextField id="standard-basic" type={show ? 'password' : 'text'} placeholder='Enter your password' label="password" variant="standard" style= {{marginTop: '60px', width: '100%',}}/>
+                            {
+                              show
+                              ?
+                              <IoEyeOutline style={{position: 'absolute', right: '0', top: '70%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                              :
+                              <FaRegEyeSlash style={{position: 'absolute', right: '0', top: '70%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                            }
+                          </div>
                         </div>
                       </form>
                       <Stack >
