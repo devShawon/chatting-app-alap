@@ -3,8 +3,8 @@ import './auth.css'
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
 import Heading from '../../components/utilities/Heading';
+import Input from '../../components/utilities/Input';
 import Image from '../../components/utilities/Image';
 
 import google from '../../assets/images/login/google.png'
@@ -16,6 +16,9 @@ import Stack from '@mui/material/Stack';
 import HyperLink from '../../components/utilities/HyperLink';
 import { IoEyeOutline } from "react-icons/io5";
 import { FaRegEyeSlash } from "react-icons/fa6";
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -41,6 +44,27 @@ const Login = () => {
     }
   }
 
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    onSubmit: (values, actions) => {
+      console.log(values);
+      actions.resetForm()
+    },
+  });
+
+  validationSchema: Yup.object({
+    email: Yup.string()
+          .email('Invalid email address')
+          .required('Required'),
+    password: Yup.string()
+              .max(20, 'Must be 20 characters or less')
+              .required('Required')
+              .min(5, 'must be 5 characters or more')
+  })
+
   return (
     <>
         <Box sx={{ flexGrow: 1 }}>
@@ -62,11 +86,37 @@ const Login = () => {
                           text= 'Login with Google'
                       />
                     </div>
-                      <form action="" method=''>
+                      <form action='' onSubmit={formik.handleSubmit}>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
-                          <TextField id="standard-basic" placeholder='Youraddres@email.com' label="Email Address" variant="standard" style={{width: '372px', marginTop: '32px',}} />
+                          <div>
+                            <Input 
+                              style={{width: '372px', marginTop: '32px',}} 
+                              name='email' 
+                              id= 'email' 
+                              type='email'
+                              placeholder='Youraddres@email.com' 
+                              label='Email Address' 
+                              variant='standard' 
+                              value={formik.values.email} 
+                              onChange={formik.handleChange} />
+                              {formik.touched.email && formik.errors.email ? (
+                                <div>{formik.errors.email}</div>
+                              ) : null}
+                          </div>
                           <div style={{position: 'relative',}}>
-                            <TextField id="standard-basic" type={show ? 'password' : 'text'} placeholder='Enter your password' label="password" variant="standard" style= {{marginTop: '60px', width: '100%',}}/>
+                            <Input 
+                              style={{width: '372px', marginTop: '60px',}} 
+                              name='password' 
+                              id= 'password' 
+                              type={ show ? 'password' : 'text'}
+                              placeholder='Enter your password' 
+                              label='Password' 
+                              variant='standard' 
+                              value={formik.values.password} 
+                              onChange={formik.handleChange} />                 
+                              {formik.touched.password && formik.errors.password ? (
+                                <div>{formik.errors.password}</div>
+                              ) : null}
                             {
                               show
                               ?
@@ -76,10 +126,10 @@ const Login = () => {
                             }
                           </div>
                         </div>
+                        <Stack >
+                          <ColorButton type='submit' variant="contained">Login to continue</ColorButton>
+                        </Stack>
                       </form>
-                      <Stack >
-                        <ColorButton variant="contained">Login to continue</ColorButton>
-                      </Stack>
                       <div style={{marginTop:'44px', marginLeft: '18px'}}>
                         <p style={{fontSize: '13px', fontFamily: '"Open Sans", sans-serif', fontWeight: '400', color: '#03014C', display: 'flex', alignItems: 'center', columnGap:'2px'}}>Don't have an accouont? <HyperLink path= '/registration' style= {{fontWeight: '700', color: '#EA6C00'}} text= 'Sign up' /> </p>
                       </div>
