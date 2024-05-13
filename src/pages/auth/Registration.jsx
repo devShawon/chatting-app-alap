@@ -16,7 +16,8 @@ import HyperLink from '../../components/utilities/HyperLink';
 import { useFormik } from 'formik';
 import Input from '../../components/utilities/Input';
 import RegistrationValidation from '../../components/validation/RegistrationValidation';
-import { getDatabase, ref, set } from "firebase/database";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+// import { getDatabase, ref, set } from "firebase/database";
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -32,7 +33,8 @@ const ColorButton = styled(Button)(() => ({
 }));
 
 const Registration = () => {
-  const db = getDatabase()
+  const auth = getAuth();
+  // const db = getDatabase()
 
   let [show, setShow] = useState(true)
 
@@ -53,13 +55,16 @@ const Registration = () => {
     onSubmit: (values, actions) => {
       console.log(values);
       actions.resetForm()
-      set(ref(db, 'users/'), {
-        username: name,
-        email: email,
-        profile_picture : imageUrl
+      createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        console.log(userCredential);
+      })
+      .catch((error) => {
+        console.log(error);
       });
     },
     validationSchema: RegistrationValidation
+    
   });
 
 
