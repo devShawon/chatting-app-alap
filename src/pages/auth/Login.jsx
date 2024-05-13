@@ -18,7 +18,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import { FaRegEyeSlash } from "react-icons/fa6";
 
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import LoginValidation from '../../components/validation/LoginValidation';
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -53,17 +53,9 @@ const Login = () => {
       console.log(values);
       actions.resetForm()
     },
+    validationSchema: LoginValidation
   });
 
-  validationSchema: Yup.object({
-    email: Yup.string()
-          .email('Invalid email address')
-          .required('Required'),
-    password: Yup.string()
-              .max(20, 'Must be 20 characters or less')
-              .required('Required')
-              .min(5, 'must be 5 characters or more')
-  })
 
   return (
     <>
@@ -98,10 +90,11 @@ const Login = () => {
                               label='Email Address' 
                               variant='standard' 
                               value={formik.values.email} 
-                              onChange={formik.handleChange} />
-                              {formik.touched.email && formik.errors.email ? (
-                                <div>{formik.errors.email}</div>
-                              ) : null}
+                              onChange={formik.handleChange} 
+                            />
+                            {formik.touched.email && formik.errors.email ? (
+                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.email}</p>
+                            ) : null}
                           </div>
                           <div style={{position: 'relative',}}>
                             <Input 
@@ -113,10 +106,11 @@ const Login = () => {
                               label='Password' 
                               variant='standard' 
                               value={formik.values.password} 
-                              onChange={formik.handleChange} />                 
-                              {formik.touched.password && formik.errors.password ? (
-                                <div>{formik.errors.password}</div>
-                              ) : null}
+                              onChange={formik.handleChange} 
+                            />                 
+                            {formik.touched.password && formik.errors.password ? (
+                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.password}</p>
+                            ) : null}
                             {
                               show
                               ?

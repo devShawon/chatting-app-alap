@@ -1,19 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './auth.css'
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
 import Heading from '../../components/utilities/Heading';
 import Image from '../../components/utilities/Image';
 import Paragraph from '../../components/utilities/Paragraph';
-
 import registrationImg from '../../assets/images/registration/registration.png'
-
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import { IoEyeOutline } from 'react-icons/io5';
+import { FaRegEyeSlash } from 'react-icons/fa6';
 import Stack from '@mui/material/Stack';
 import HyperLink from '../../components/utilities/HyperLink';
+import { useFormik } from 'formik';
+import Input from '../../components/utilities/Input';
+import RegistrationValidation from '../../components/validation/RegistrationValidation';
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -29,6 +31,30 @@ const ColorButton = styled(Button)(() => ({
 }));
 
 const Registration = () => {
+
+  let [show, setShow] = useState(true)
+
+  let handlePassShow = () => {
+    if(show){
+      setShow(false)
+    }else{
+      setShow(true)
+    }
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      fullname: '',
+      password: ''
+    },
+    onSubmit: (values, actions) => {
+      console.log(values);
+      actions.resetForm()
+    },
+    validationSchema: RegistrationValidation
+  });
+
   return (
     <>
         <Box sx={{ flexGrow: 1 }}>
@@ -41,16 +67,68 @@ const Registration = () => {
                         text= 'Get started with easily register'
                     />
                     <Paragraph style={{fontSize: '20px', color: '#11175D', fontFamily: '"Nunito", sans-serif', opacity: '0.5', marginTop: '13px'}} text= 'Free register and you can enjoy it' />
-                      <form action="" method=''>
+                      <form action="" method='' onSubmit={formik.handleSubmit}>
                         <div style={{display: 'flex', flexDirection: 'column', rowGap: '56px', width: '372px'}}>
-                          <TextField id="standard-basic" placeholder='Youraddres@email.com' label="Email Address" variant="outlined" style={{width: '372px', marginTop: '32px'}} />
-                          <TextField id="standard-basic" placeholder='Enter your password' label="Full Name" variant="outlined" style={{}}/>
-                          <TextField id="standard-basic" placeholder='Enter your password' label="password" variant="outlined" style={{}}/>
+                          <div>
+                            <Input 
+                              style={{width: '372px', marginTop: '32px'}}
+                              name= 'email'
+                              id= 'email'
+                              type= 'email'
+                              placeholder= 'youraddress@gmail.com'
+                              label='Email Address'
+                              variant= 'outlined'
+                              value= {formik.values.email}
+                              onChange={formik.handleChange}
+                            />
+                            {formik.touched.email && formik.errors.email ? (
+                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.email}</p>
+                            ) : null}
+                          </div>
+                          <div>
+                            <Input 
+                              style={{width: '100%'}}
+                              name= 'fullname'
+                              id= 'fullname'
+                              type= 'text'
+                              placeholder= 'Your name'
+                              label='Full Name'
+                              variant= 'outlined'
+                              value= {formik.values.fullname}
+                              onChange={formik.handleChange}
+                            />
+                            {formik.touched.fullname && formik.errors.fullname ? (
+                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.fullname}</p>
+                            ) : null}
+                          </div>
+                          <div style={{position: 'relative'}}>
+                            <Input 
+                              style={{width: '100%'}}
+                              name= 'password'
+                              id= 'password'
+                              type= {show ? 'password' : 'text'}
+                              placeholder= 'Enter your password'
+                              label='Password'
+                              variant= 'outlined'
+                              value= {formik.values.password}
+                              onChange={formik.handleChange}
+                            />
+                            {formik.touched.password && formik.errors.password ? (
+                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.password}</p>
+                            ) : null}
+                            {
+                              show
+                              ?
+                              <IoEyeOutline style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                              :
+                              <FaRegEyeSlash style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                            }
+                          </div>
                         </div>
+                        <Stack >
+                          <ColorButton type='submit' variant="contained">Sign Up</ColorButton>
+                        </Stack>
                       </form>
-                      <Stack >
-                        <ColorButton variant="contained">Sign Up</ColorButton>
-                      </Stack>
                       <div style={{marginTop:'40px', marginLeft: '75px'}}>
                         <p style={{fontSize: '13px', fontFamily: '"Open Sans", sans-serif', fontWeight: '400', color: '#03014C', display: 'flex', alignItems: 'center', columnGap:'2px'}}>Don't have an accouont?<HyperLink path= '/' style= {{fontWeight: '700', color: '#EA6C00'}} text= 'Sign in' /></p>
                       </div>
