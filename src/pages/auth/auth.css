@@ -23,3 +23,12 @@
     font-weight: 600;
     letter-spacing: 0.267px;
 }
+.forgetpass{
+    font-size: 14px;
+    font-family: var(--open);
+    text-transform: capitalize;
+}
+.forgetpass:hover{
+    text-decoration: underline;
+    color: red;
+}

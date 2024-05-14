@@ -16,8 +16,8 @@ import HyperLink from '../../components/utilities/HyperLink';
 import { useFormik } from 'formik';
 import Input from '../../components/utilities/Input';
 import RegistrationValidation from '../../components/validation/RegistrationValidation';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-// import { getDatabase, ref, set } from "firebase/database";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile} from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -34,7 +34,7 @@ const ColorButton = styled(Button)(() => ({
 
 const Registration = () => {
   const auth = getAuth();
-  // const db = getDatabase()
+  const db = getDatabase()
 
   let [show, setShow] = useState(true)
 
@@ -53,11 +53,27 @@ const Registration = () => {
       password: ''
     },
     onSubmit: (values, actions) => {
-      console.log(values);
+      // console.log(values);
       actions.resetForm()
       createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
-        console.log(userCredential);
+        // console.log(userCredential);
+        sendEmailVerification(auth.currentUser)
+        .then(() => {
+          updateProfile(auth.currentUser, {
+            displayName: values.fullname, 
+            photoURL: 'https://example.com/jane-q-user/profile.jpg'
+          }).then(() => {
+            // console.log(userCredential);
+            set(ref(db, 'users/' + userCredential.user.uid), {
+              username: userCredential.user.displayName,
+              email: userCredential.user.email,
+              profile_picture : userCredential.user.photoURL
+            })
+          }).catch((error) => {
+            console.log(error);
+          });
+        });
       })
       .catch((error) => {
         console.log(error);

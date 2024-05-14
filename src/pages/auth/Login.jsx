@@ -6,19 +6,17 @@ import Grid from '@mui/material/Grid';
 import Heading from '../../components/utilities/Heading';
 import Input from '../../components/utilities/Input';
 import Image from '../../components/utilities/Image';
-
 import google from '../../assets/images/login/google.png'
 import loginImg from '../../assets/images/login/login-img.png'
-
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import HyperLink from '../../components/utilities/HyperLink';
 import { IoEyeOutline } from "react-icons/io5";
 import { FaRegEyeSlash } from "react-icons/fa6";
-
 import { useFormik } from 'formik';
 import LoginValidation from '../../components/validation/LoginValidation';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -33,6 +31,7 @@ const ColorButton = styled(Button)(() => ({
 }));
 
 const Login = () => {
+  const auth = getAuth();
 
   let [show, setShow] = useState(true)
 
@@ -49,13 +48,19 @@ const Login = () => {
       email: '',
       password: ''
     },
+    validationSchema: LoginValidation,
     onSubmit: (values, actions) => {
-      console.log(values);
+      // console.log(values);
       actions.resetForm()
+      signInWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        console.log(userCredential);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     },
-    validationSchema: LoginValidation
   });
-
 
   return (
     <>
@@ -118,6 +123,9 @@ const Login = () => {
                               :
                               <FaRegEyeSlash style={{position: 'absolute', right: '0', top: '70%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
                             }
+                          </div>
+                          <div style={{textAlign: 'right', marginTop: '5px', }}>
+                            <HyperLink onClick='' className='forgetpass' text='forgotten password' />
                           </div>
                         </div>
                         <Stack >
