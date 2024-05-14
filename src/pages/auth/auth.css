@@ -32,3 +32,14 @@
     text-decoration: underline;
     color: red;
 }
+.updatepass{
+    padding: 15px 30px;
+    background-color: var(--secondary);
+    border: none;
+    color: white;
+    font-size: 18px;
+    margin-top: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: capitalize;
+}

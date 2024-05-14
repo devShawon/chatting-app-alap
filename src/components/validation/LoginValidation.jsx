@@ -10,7 +10,13 @@ const LoginValidation = Yup.object({
     password: Yup.string()
               .max(15, 'Must be 15 characters or less')
               .required('*password required')
-              .min(5, '*must be 5 characters or more')
+              .min(5, '*must be 5 characters or more'),
+    old_password: Yup.string()
+              .required('*old password must be given'),
+    new_password: Yup.string()
+              .max(15, 'Must be 15 characters or less')
+              .required('*password required')
+              .min(5, '*must be 5 characters or more'),
   })
 
 export default LoginValidation

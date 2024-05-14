@@ -9,16 +9,19 @@ import Image from '../../components/utilities/Image';
 import google from '../../assets/images/login/google.png'
 import loginImg from '../../assets/images/login/login-img.png'
 import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
+import MuiButton from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import HyperLink from '../../components/utilities/HyperLink';
+import Modal from '@mui/material/Modal';
 import { IoEyeOutline } from "react-icons/io5";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { useFormik } from 'formik';
 import LoginValidation from '../../components/validation/LoginValidation';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
+import Button from '../../components/utilities/Button';
+// import ForgetModal from '../../components/validation/ForgetModal';
 
-const ColorButton = styled(Button)(() => ({
+const ColorButton = styled(MuiButton)(() => ({
   backgroundColor: '#5F35F5',
   paddingTop: '26px',
   paddingBottom: '26px',
@@ -30,10 +33,27 @@ const ColorButton = styled(Button)(() => ({
   fontWeight: '600',
 }));
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};  
+
 const Login = () => {
   const auth = getAuth();
+  const user = auth.currentUser;
+
 
   let [show, setShow] = useState(true)
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   let handlePassShow = () => {
     if(show){
@@ -46,15 +66,26 @@ const Login = () => {
   const formik = useFormik({
     initialValues: {
       email: '',
-      password: ''
+      password: '',
+      old_password: '',
+      new_password: ''
     },
     validationSchema: LoginValidation,
     onSubmit: (values, actions) => {
       // console.log(values);
       actions.resetForm()
+      if(values.password === values.old_password){
+        updatePassword(user).then(() => {
+          console.log('update success');
+        }).catch((error) => {
+          console.log(error);
+        });
+      }else{
+        console.log('password match hoi nai');
+      }
       signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
-        console.log(userCredential);
+        console.log('sign in');
       })
       .catch((error) => {
         console.log(error);
@@ -125,7 +156,9 @@ const Login = () => {
                             }
                           </div>
                           <div style={{textAlign: 'right', marginTop: '5px', }}>
-                            <HyperLink onClick='' className='forgetpass' text='forgotten password' />
+                            <HyperLink onClick={handleOpen} classN  ame='forgetpass' text='forgotten password' />
+                            
+                            {/* <ForgetModal /> */}
                           </div>
                         </div>
                         <Stack >
@@ -142,6 +175,64 @@ const Login = () => {
                     <Image src={loginImg} alt= 'image' classname= 'img' />
                   </div>
               </Grid>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                  <form action="" onSubmit={formik.handleSubmit}>
+                    <div style={{position: 'relative'}}>
+                      <Input 
+                      style={{width:'100%'}} 
+                      name='old_password' 
+                      id= 'old_password' 
+                      type={ show ? 'password' : 'text'}
+                      placeholder='Enter old password' 
+                      label='Old Password' 
+                      variant='outlined' 
+                      value={formik.values.old_password} 
+                      onChange={formik.handleChange} 
+                    /> 
+                    {formik.touched.old_password && formik.errors.old_password ? (
+                      <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.old_password}</p>
+                    ) : null}
+                    {
+                      show
+                      ?
+                      <IoEyeOutline style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                      :
+                      <FaRegEyeSlash style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                    }
+                    </div>
+                    <div style={{position: 'relative', marginTop: '20px'}}>
+                      <Input 
+                      style={{width:'100%'}} 
+                      name='new_password' 
+                      id= 'new_password' 
+                      type={ show ? 'password' : 'text'}
+                      placeholder='Enter new password' 
+                      label='New Password' 
+                      variant='outlined' 
+                      value={formik.values.new_password} 
+                      onChange={formik.handleChange} 
+                    /> 
+                    {formik.touched.new_password && formik.errors.new_password ? (
+                      <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.new_password}</p>
+                    ) : null}
+                    {
+                      show
+                      ?
+                      <IoEyeOutline style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                      :
+                      <FaRegEyeSlash style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                    }
+                    </div>
+                    <Button className='updatepass' type='submit' text='update password' />
+                  </form>
+                </Box>
+              </Modal>
           </Grid>
       </Box>
     </>

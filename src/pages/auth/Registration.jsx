@@ -57,9 +57,10 @@ const Registration = () => {
       actions.resetForm()
       createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
-        // console.log(userCredential);
+        console.log('create user');
         sendEmailVerification(auth.currentUser)
         .then(() => {
+          console.log('email sent');
           updateProfile(auth.currentUser, {
             displayName: values.fullname, 
             photoURL: 'https://example.com/jane-q-user/profile.jpg'
