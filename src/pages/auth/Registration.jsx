@@ -18,6 +18,8 @@ import Input from '../../components/utilities/Input';
 import RegistrationValidation from '../../components/validation/RegistrationValidation';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile} from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
+import { ToastContainer, toast } from 'react-toastify';
+import Toastify from '../../components/utilities/Toastify';
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -66,6 +68,7 @@ const Registration = () => {
             photoURL: 'https://example.com/jane-q-user/profile.jpg'
           }).then(() => {
             // console.log(userCredential);
+            text= 'asdfasdf..'
             set(ref(db, 'users/' + userCredential.user.uid), {
               username: userCredential.user.displayName,
               email: userCredential.user.email,
@@ -88,6 +91,7 @@ const Registration = () => {
   return (
     <>
         <Box sx={{ flexGrow: 1 }}>
+        <Toastify />
           <Grid container >
               <Grid item xs={6} style={{display: 'flex', alignItems:'center', justifyContent: 'center',}}>
                 <div>
