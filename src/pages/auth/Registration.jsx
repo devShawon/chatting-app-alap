@@ -18,8 +18,10 @@ import Input from '../../components/utilities/Input';
 import RegistrationValidation from '../../components/validation/RegistrationValidation';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile} from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Toastify from '../../components/utilities/Toastify';
+import { useNavigate } from "react-router-dom";
+import { Puff } from 'react-loader-spinner';
 
 const ColorButton = styled(Button)(() => ({
   backgroundColor: '#5F35F5',
@@ -37,8 +39,11 @@ const ColorButton = styled(Button)(() => ({
 const Registration = () => {
   const auth = getAuth();
   const db = getDatabase()
+  const navigate = useNavigate();
 
-  let [show, setShow] = useState(true)
+  const [show, setShow] = useState(true)
+  const [loading, setLoading] = useState(false)
+
 
   let handlePassShow = () => {
     if(show){
@@ -56,7 +61,8 @@ const Registration = () => {
     },
     onSubmit: (values, actions) => {
       // console.log(values);
-      actions.resetForm()
+     
+      setLoading(true)
       createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         console.log('create user');
@@ -68,19 +74,27 @@ const Registration = () => {
             photoURL: 'https://example.com/jane-q-user/profile.jpg'
           }).then(() => {
             // console.log(userCredential);
-            text= 'asdfasdf..'
             set(ref(db, 'users/' + userCredential.user.uid), {
               username: userCredential.user.displayName,
               email: userCredential.user.email,
               profile_picture : userCredential.user.photoURL
+            }).then(()=>{
+              toast.success('Registration Successful...')
+              actions.resetForm()
+              setLoading(false)
+              setTimeout(() => {
+                navigate("/");
+              },1000)
             })
           }).catch((error) => {
             console.log(error);
+            setLoading(false)
           });
         });
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false)
       });
     },
     validationSchema: RegistrationValidation
@@ -90,90 +104,104 @@ const Registration = () => {
 
   return (
     <>
-        <Box sx={{ flexGrow: 1 }}>
+      {
+        loading &&
+          <div className='loading-wrapper'>
+            <Puff
+              visible={true}
+              height="120"
+              width="120"
+              color="#fff"
+              ariaLabel="puff-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+          </div>
+      }
+      <Box sx={{ flexGrow: 1 }}>
         <Toastify />
-          <Grid container >
-              <Grid item xs={6} style={{display: 'flex', alignItems:'center', justifyContent: 'center',}}>
-                <div>
-                    <Heading 
-                        Heading={'h4'}
-                        classname= 'loginheading'
-                        text= 'Get started with easily register'
-                    />
-                    <Paragraph style={{fontSize: '20px', color: '#11175D', fontFamily: '"Nunito", sans-serif', opacity: '0.5', marginTop: '13px'}} text= 'Free register and you can enjoy it' />
-                      <form action="" method='' onSubmit={formik.handleSubmit}>
-                        <div style={{display: 'flex', flexDirection: 'column', rowGap: '56px', width: '372px'}}>
-                          <div>
-                            <Input 
-                              style={{width: '372px', marginTop: '32px'}}
-                              name= 'email'
-                              id= 'email'
-                              type= 'email'
-                              placeholder= 'youraddress@gmail.com'
-                              label='Email Address'
-                              variant= 'outlined'
-                              value= {formik.values.email}
-                              onChange={formik.handleChange}
-                            />
-                            {formik.touched.email && formik.errors.email ? (
-                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.email}</p>
-                            ) : null}
-                          </div>
-                          <div>
-                            <Input 
-                              style={{width: '100%'}}
-                              name= 'fullname'
-                              id= 'fullname'
-                              type= 'text'
-                              placeholder= 'Your name'
-                              label='Full Name'
-                              variant= 'outlined'
-                              value= {formik.values.fullname}
-                              onChange={formik.handleChange}
-                            />
-                            {formik.touched.fullname && formik.errors.fullname ? (
-                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.fullname}</p>
-                            ) : null}
-                          </div>
-                          <div style={{position: 'relative'}}>
-                            <Input 
-                              style={{width: '100%'}}
-                              name= 'password'
-                              id= 'password'
-                              type= {show ? 'password' : 'text'}
-                              placeholder= 'Enter your password'
-                              label='Password'
-                              variant= 'outlined'
-                              value= {formik.values.password}
-                              onChange={formik.handleChange}
-                            />
-                            {formik.touched.password && formik.errors.password ? (
-                              <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.password}</p>
-                            ) : null}
-                            {
-                              show
-                              ?
-                              <IoEyeOutline style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
-                              :
-                              <FaRegEyeSlash style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
-                            }
-                          </div>
+        <Grid container >
+            <Grid item xs={6} style={{display: 'flex', alignItems:'center', justifyContent: 'center',}}>
+              <div>
+                  <Heading 
+                      Heading={'h4'}
+                      classname= 'loginheading'
+                      text= 'Get started with easily register'
+                  />
+                  <Paragraph style={{fontSize: '20px', color: '#11175D', fontFamily: '"Nunito", sans-serif', opacity: '0.5', marginTop: '13px'}} text= 'Free register and you can enjoy it' />
+                    <form action="" method='' onSubmit={formik.handleSubmit}>
+                      <div style={{display: 'flex', flexDirection: 'column', rowGap: '56px', width: '372px'}}>
+                        <div>
+                          <Input 
+                            style={{width: '372px', marginTop: '32px'}}
+                            name= 'email'
+                            id= 'email'
+                            type= 'email'
+                            placeholder= 'youraddress@gmail.com'
+                            label='Email Address'
+                            variant= 'outlined'
+                            value= {formik.values.email}
+                            onChange={formik.handleChange}
+                          />
+                          {formik.touched.email && formik.errors.email ? (
+                            <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.email}</p>
+                          ) : null}
                         </div>
-                        <Stack >
-                          <ColorButton type='submit' variant="contained">Sign Up</ColorButton>
-                        </Stack>
-                      </form>
-                      <div style={{marginTop:'40px', marginLeft: '75px'}}>
-                        <p style={{fontSize: '13px', fontFamily: '"Open Sans", sans-serif', fontWeight: '400', color: '#03014C', display: 'flex', alignItems: 'center', columnGap:'2px'}}>Don't have an accouont?<HyperLink path= '/' style= {{fontWeight: '700', color: '#EA6C00'}} text= 'Sign in' /></p>
+                        <div>
+                          <Input 
+                            style={{width: '100%'}}
+                            name= 'fullname'
+                            id= 'fullname'
+                            type= 'text'
+                            placeholder= 'Your name'
+                            label='Full Name'
+                            variant= 'outlined'
+                            value= {formik.values.fullname}
+                            onChange={formik.handleChange}
+                          />
+                          {formik.touched.fullname && formik.errors.fullname ? (
+                            <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.fullname}</p>
+                          ) : null}
+                        </div>
+                        <div style={{position: 'relative'}}>
+                          <Input 
+                            style={{width: '100%'}}
+                            name= 'password'
+                            id= 'password'
+                            type= {show ? 'password' : 'text'}
+                            placeholder= 'Enter your password'
+                            label='Password'
+                            variant= 'outlined'
+                            value= {formik.values.password}
+                            onChange={formik.handleChange}
+                          />
+                          {formik.touched.password && formik.errors.password ? (
+                            <p style={{color: 'red', fontSize: '12px', fontFamily: '"Nunito", sans-serif'}}>{formik.errors.password}</p>
+                          ) : null}
+                          {
+                            show
+                            ?
+                            <IoEyeOutline style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                            :
+                            <FaRegEyeSlash style={{position: 'absolute', right: '10px', top: '30%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
+                          }
+                        </div>
                       </div>
+                      <Stack >
+                        <ColorButton type='submit' variant="contained">Sign Up</ColorButton>
+                      </Stack>
+                    </form>
+                    <div style={{marginTop:'40px', marginLeft: '75px'}}>
+                      <p style={{fontSize: '13px', fontFamily: '"Open Sans", sans-serif', fontWeight: '400', color: '#03014C', display: 'flex', alignItems: 'center', columnGap:'2px'}}>Don't have an accouont?<HyperLink path= '/' style= {{fontWeight: '700', color: '#EA6C00'}} text= 'Sign in' /></p>
+                    </div>
+              </div>
+            </Grid>
+            <Grid item xs={6}>
+                <div style={{width: '100%', height: '100vh', overflow: 'hidden'}}>
+                  <Image src={registrationImg} alt= 'image' classname= 'img' />
                 </div>
-              </Grid>
-              <Grid item xs={6}>
-                  <div style={{width: '100%', height: '100vh', overflow: 'hidden'}}>
-                    <Image src={registrationImg} alt= 'image' classname= 'img' />
-                  </div>
-              </Grid>
-          </Grid>
+            </Grid>
+        </Grid>
       </Box>
     </>
   )
