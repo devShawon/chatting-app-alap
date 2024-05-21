@@ -1,0 +1,26 @@
+.errorHeading{
+    color: var(--primary);
+    font-family: var(--open);
+    font-size: 40px;
+    opacity: 0.7;
+    margin-top: 30px;
+}
+.errorparagraph{
+    font-size: 20px;
+    font-family: var(--open);
+    color: var(--primary);
+    opacity: 0.5;
+    width: 700px;
+    text-align: center;
+    margin-top: 30px;
+}
+.errorbtn{
+    font-size: 16px;
+    padding: 12px 25px;
+    background-color: transparent;
+    border: 1px solid var(--secondary);
+    border-radius: 8px;
+    color: var(--secondary);
+    margin-top: 30px;
+    cursor: pointer;
+}
