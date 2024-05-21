@@ -24,6 +24,8 @@ import Toastify from '../../components/utilities/Toastify';
 import { RxCross2 } from "react-icons/rx";
 import Paragraph from '../../components/utilities/Paragraph';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux'
+import { userValue } from '../../slices/authSlice';
 
 const ColorButton = styled(MuiButton)(() => ({
   backgroundColor: '#5F35F5',
@@ -53,6 +55,10 @@ const Login = () => {
   const auth = getAuth();
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
+  const userdata = useSelector((state) => state.loginUser.value);
+  const dispatch = useDispatch();
+
+  console.log(userdata);
 
   let [show, setShow] = useState(true)
   const [open, setOpen] = React.useState(false);
@@ -79,12 +85,17 @@ const Login = () => {
       actions.resetForm()
       console.log(values);
       signInWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {  
-        console.log(userCredential);
-        toast.success('Successfully Sign In...')
-        setTimeout(() => {
-          navigate("/home");
-        },1000)
+      .then((userCredential) => { 
+        const user = userCredential.user
+        console.log(user);
+        if(user.emailVerified == true){
+          toast.success('Successfully Sign In...')
+          setTimeout(() => {
+            navigate("/home");
+          },1000)
+        }else{
+          toast.error('email not verify...')
+        }
       })
       .catch((error) => {
         toast.error('Credential error...')
@@ -114,11 +125,13 @@ const Login = () => {
   const handleGoogle = () => {
     signInWithPopup(auth, provider)
     .then((result) => {
+      const user = result.user
+      localStorage.setItem('loginUser', JSON.stringify(user))
+      dispatch(userValue)
       toast.success('Successfully Sign In...')
       setTimeout(() => {
         navigate('/home')
       },2000)
-      console.log(result);
     }).catch((error) => {
       console.log(error);
     });
@@ -141,9 +154,9 @@ const Login = () => {
                       <Image src={google} alt= 'google' classname='img' />
                     </div>
                     <Heading
-                        Heading={'h6'}
-                        classname= 'logingoogle'
-                        text= 'Login with Google'
+                      Heading={'h6'}
+                      classname= 'logingoogle'
+                      text= 'Login with Google'
                     />
                   </div>
                     <form action='' onSubmit={formik.handleSubmit}>

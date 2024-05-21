@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Heading = ({Heading, classname, text}) => {
+const Heading = ({Heading, style, classname, text}) => {
   return (
-    <Heading className={classname}>{text}</Heading>
+    <Heading className={classname} style={style}>{text}</Heading>
   )
 }
 

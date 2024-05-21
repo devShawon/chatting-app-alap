@@ -36,3 +36,9 @@
     background-color: transparent;
     color: white;
 }
+.displayname{
+    color: var(--white);
+    font-family: var(--open);
+    font-size: 20px;
+    margin-top: 10px;
+}
