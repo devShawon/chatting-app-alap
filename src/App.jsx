@@ -28,10 +28,10 @@ const App = () => {
               <Route path='/notification' element={<Notification />} />
               <Route path='/settings' element={<Settings />} />
           </Route>
+        </Route>
           <Route path='*' element={<Error />} />
           <Route path='/' element={<Login />} />
           <Route path='/registration' element={<Registration />} />
-        </Route>
       </Route>
     )
   );

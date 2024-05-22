@@ -23,9 +23,9 @@ const Sidebar = () => {
   const dispatch = useDispatch();
 
   const handleSignOut = () => {
-    localStorage.removeItem('loginUser')
-    dispatch(userValue(null))
     signOut(auth).then(() => {
+      localStorage.removeItem('loginUser')
+      dispatch(userValue(null))
       navigate('/')
     }).catch((error) => {
       console.log(error);
