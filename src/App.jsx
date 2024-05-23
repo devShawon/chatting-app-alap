@@ -14,14 +14,14 @@ import Error from './pages/error/Error';
 import Message from './pages/message/Message';
 import Notification from './pages/notification/Notification';
 import Settings from './pages/settings/Settings';
-import PrivateRoute from './components/layout/PrivateRoute';
+import IsLogedinUser from './pages/privateRoutes/IsLogedinUser';
 
 const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-        <Route element={<PrivateRoute />}>
+        <Route element={<IsLogedinUser />}>
           <Route element={<RootLayout />}>
               <Route path='/home' element={<Home />} />
               <Route path='/message' element={<Message />} />

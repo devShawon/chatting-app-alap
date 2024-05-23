@@ -12,16 +12,16 @@ import { styled } from '@mui/material/styles';
 import MuiButton from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import HyperLink from '../../components/utilities/HyperLink';
-import Modal from '@mui/material/Modal';
 import { IoEyeOutline } from "react-icons/io5";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { useFormik } from 'formik';
 import LoginValidation from '../../components/validation/LoginValidation';
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup  } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup  } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 import { toast } from 'react-toastify';
 import Toastify from '../../components/utilities/Toastify';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { userValue } from '../../slices/authSlice';
 import ForgetModal from '../../components/validation/ForgetModal';
 
@@ -40,9 +40,9 @@ const ColorButton = styled(MuiButton)(() => ({
 const Login = () => {
 
   const auth = getAuth();
+  const db = getDatabase();
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
-  const userdata = useSelector((state) => state.loginUser.value);
   const dispatch = useDispatch();
   let [show, setShow] = useState(true)
 
@@ -86,12 +86,18 @@ const Login = () => {
     signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user
-      localStorage.setItem('loginUser', JSON.stringify(user))
-      dispatch(userValue(user))
-      toast.success('Successfully Sign In...')
-      setTimeout(() => {
-        navigate('/home')
-      },1500)
+      set(ref(db, 'users/' + user.uid), {
+        userName: user.displayName,
+        email: user.email,
+        profile_picture : user.photoURL
+      }).then(() => {
+        localStorage.setItem('loginUser', JSON.stringify(user))
+        dispatch(userValue(user))
+        toast.success('Successfully Sign In...')
+        setTimeout(() => {
+          navigate('/home')
+        },1500)
+      })
     }).catch((error) => {
       console.log(error);
     });

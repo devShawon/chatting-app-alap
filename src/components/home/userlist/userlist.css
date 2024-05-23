@@ -1,0 +1,72 @@
+.userlist{
+    width: 450px;
+    height: 380px;
+    background-color: var(--white);
+    padding: 10px 20px;
+    box-shadow: -1px 1px 3px 0px rgba(0,0,0,0.75);
+    -webkit-box-shadow: -1px 1px 3px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: -1px 1px 3px 0px rgba(0,0,0,0.75);
+}
+.userlistHeading {
+    color: var(--black);
+    font-family: var(--poppins);
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.userlistdotIcon {
+    color: var(--secondary);
+    font-size: 20px;
+}
+.userItemBox{
+    height: 300px;
+    margin-top: 30px;
+    overflow-y: scroll;
+    padding-bottom: 20px;
+    width: 105%;
+}
+.userlistItem{
+    display: flex;
+    align-items: center;
+    column-gap: 150px;
+    position: relative;
+    margin-bottom: 35px;
+}
+.userlistItem::after{
+    position: absolute;
+    content: '';
+    bottom: -15px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 90%;
+    height: 1px;
+}
+.userlistItem:last-child{
+    position: static;
+    margin: 0;
+}
+.userImgbox{
+    height: 52px;
+    width: 52px;
+    background-color: antiquewhite;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.usernameheading{
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--poppins);
+    color: var(--black);
+}
+.usersubheading{
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--poppins);
+    color: rgba(0, 0, 0, 0.5);
+}
+.useraddIcon{
+    font-size: 30px;
+    color: var(--secondary);
+    border-radius: 5px;
+    cursor: pointer;
+}

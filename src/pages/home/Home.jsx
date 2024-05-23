@@ -1,8 +1,11 @@
 import React from 'react'
+import UserList from '../../components/home/userlist/UserList'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <div style={{marginTop:'30px'}}>
+      <UserList />
+    </div>
   )
 }
 
