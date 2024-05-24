@@ -16,14 +16,17 @@ import { IoEyeOutline } from "react-icons/io5";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { useFormik } from 'formik';
 import LoginValidation from '../../components/validation/LoginValidation';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup  } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, sendPasswordResetEmail, signInWithPopup, signOut } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 import { toast } from 'react-toastify';
 import Toastify from '../../components/utilities/Toastify';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { userValue } from '../../slices/authSlice';
-import ForgetModal from '../../components/validation/ForgetModal';
+import { Modal } from '@mui/material';
+import Paragraph from '../../components/utilities/Paragraph';
+import Button from '../../components/utilities/Button';
+import { RxCross2 } from 'react-icons/rx';
 
 const ColorButton = styled(MuiButton)(() => ({
   backgroundColor: '#5F35F5',
@@ -37,6 +40,18 @@ const ColorButton = styled(MuiButton)(() => ({
   fontWeight: '600',
 }));
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};  
+
 const Login = () => {
 
   const auth = getAuth();
@@ -44,7 +59,15 @@ const Login = () => {
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   const dispatch = useDispatch();
-  let [show, setShow] = useState(true)
+  const [show, setShow] = useState(true)
+  const [user, setUser] = useState('')
+  const userdata = useSelector((state) => state.loginUser.value)
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [forgetemail, setforgetemail] = useState('')
+  const [forgetemailerror, setforgetemailerror] = useState('')
 
   let handlePassShow = () => {
     if(show){
@@ -54,6 +77,7 @@ const Login = () => {
     }
   }
 
+  //login validation here....
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -63,9 +87,9 @@ const Login = () => {
     onSubmit: (values, actions) => {
       actions.resetForm()
       signInWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => { 
+      .then((userCredential) => {
+        setUser(userCredential.user) 
         const user = userCredential.user
-        console.log(user);
         if(user.emailVerified == true){
           toast.success('Successfully Sign In...')
           setTimeout(() => {
@@ -77,30 +101,56 @@ const Login = () => {
       })
       .catch((error) => {
         toast.error('Credential error...')
-        console.log(error);
       });
     },
   });
 
+  //sign with google function here..
   const handleGoogle = () => {
     signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user
-      set(ref(db, 'users/' + user.uid), {
-        userName: user.displayName,
-        email: user.email,
-        profile_picture : user.photoURL
-      }).then(() => {
-        localStorage.setItem('loginUser', JSON.stringify(user))
-        dispatch(userValue(user))
-        toast.success('Successfully Sign In...')
-        setTimeout(() => {
-          navigate('/home')
-        },1500)
-      })
+      if(user.emailVerified){
+        set(ref(db, 'users/' + user.uid), {
+          userName: user.displayName,
+          email: user.email,
+          profile_picture : user.photoURL
+        }).then(() => {
+          localStorage.setItem('loginUser', JSON.stringify(user))
+          dispatch(userValue(user))
+          toast.success('Successfully Sign In...')
+          setTimeout(() => {
+            navigate('/home')
+          },1500)
+        })
+      }else{
+        toast("Please Verify your Email..")
+          signOut(auth).then(() => {
+        }).catch((error) => {
+          
+        });
+      }
     }).catch((error) => {
       console.log(error);
     });
+  }
+
+  // Reset pass function here..
+  const handleresetpass = () => {
+    if(forgetemail == ''){
+      setforgetemailerror('*please enter your email')
+    }
+    else {
+      sendPasswordResetEmail(auth, forgetemail)
+      .then(() => {
+        toast.success('cheak email & reset password...')
+        setforgetemailerror('')
+        setOpen(false)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
   }
 
   return (
@@ -166,8 +216,40 @@ const Login = () => {
                           <FaRegEyeSlash style={{position: 'absolute', right: '0', top: '70%', fontSize: '24px', color: '#b3b3c9', cursor: 'pointer'}} onClick={handlePassShow} />
                         }
                       </div>
-                      <div style={{textAlign: 'right', marginTop: '5px', }}>                        
-                        <ForgetModal />
+                      <div style={{textAlign: 'right', marginTop: '5px', }}>  
+                        <HyperLink onClick={handleOpen} className='forgetpass' text='forgotten password' />
+                        <div style={{position: 'relative',}}>
+                          <Modal
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box sx={style}>
+                              <div style={{marginTop: '20px'}}>
+                                  <Heading 
+                                      Heading={'h2'}
+                                      classname='forgetemailheading'
+                                      text='forget your email'
+                                  />
+                                  <Input 
+                                      style={{width:'100%'}} 
+                                      type='email'
+                                      name='forgotemail' 
+                                      id= 'forgotemail' 
+                                      placeholder='Enter your email' 
+                                      label='Forget Email Address' 
+                                      variant='outlined' 
+                                      onChange={(e)=>setforgetemail(e.target.value)}
+                                  /> 
+                                  <Paragraph style={{color: 'red'}} text={forgetemailerror} />
+                              </div>
+                              <Button className='updatepass' onClick={handleresetpass} text='Reset password' />
+                              <RxCross2 onClick={()=>setOpen(false)} style={{position: 'absolute', top: '10px', right: '10px', fontSize: '20px', cursor: 'pointer'}} />
+                            </Box>
+                          </Modal>
+                        </div>                      
+                        {/* <ForgetModal /> */}
                       </div>
                     </div>
                     <Stack >

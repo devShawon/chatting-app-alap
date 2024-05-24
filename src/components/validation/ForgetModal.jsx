@@ -7,7 +7,8 @@ import '../../pages/auth/auth.css'
 import Heading from '../utilities/Heading';
 import Paragraph from '../utilities/Paragraph';
 import { RxCross2 } from 'react-icons/rx';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 const style = {
     position: 'absolute',
@@ -22,6 +23,7 @@ const style = {
   };  
 
 const ForgetModal = () => {
+  const auth = getAuth();
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
