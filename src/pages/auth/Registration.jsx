@@ -75,7 +75,7 @@ const Registration = () => {
           }).then(() => {
             // console.log(userCredential);
             set(ref(db, 'users/' + userCredential.user.uid), {
-              username: userCredential.user.displayName,
+              displayName: userCredential.user.displayName,
               email: userCredential.user.email,
               profile_picture : userCredential.user.photoURL
             }).then(()=>{

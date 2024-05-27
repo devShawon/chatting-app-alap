@@ -60,8 +60,6 @@ const Login = () => {
   const provider = new GoogleAuthProvider();
   const dispatch = useDispatch();
   const [show, setShow] = useState(true)
-  const [user, setUser] = useState('')
-  const userdata = useSelector((state) => state.loginUser.value)
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -88,7 +86,6 @@ const Login = () => {
       actions.resetForm()
       signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
-        setUser(userCredential.user) 
         const user = userCredential.user
         if(user.emailVerified == true){
           toast.success('Successfully Sign In...')
@@ -112,11 +109,11 @@ const Login = () => {
       const user = result.user
       if(user.emailVerified){
         set(ref(db, 'users/' + user.uid), {
-          userName: user.displayName,
+          displayName: user.displayName,
           email: user.email,
           profile_picture : user.photoURL
         }).then(() => {
-          localStorage.setItem('loginUser', JSON.stringify(user))
+          localStorage.setItem("loginUser", JSON.stringify(user))
           dispatch(userValue(user))
           toast.success('Successfully Sign In...')
           setTimeout(() => {
@@ -227,22 +224,22 @@ const Login = () => {
                           >
                             <Box sx={style}>
                               <div style={{marginTop: '20px'}}>
-                                  <Heading 
-                                      Heading={'h2'}
-                                      classname='forgetemailheading'
-                                      text='forget your email'
-                                  />
-                                  <Input 
-                                      style={{width:'100%'}} 
-                                      type='email'
-                                      name='forgotemail' 
-                                      id= 'forgotemail' 
-                                      placeholder='Enter your email' 
-                                      label='Forget Email Address' 
-                                      variant='outlined' 
-                                      onChange={(e)=>setforgetemail(e.target.value)}
-                                  /> 
-                                  <Paragraph style={{color: 'red'}} text={forgetemailerror} />
+                                <Heading 
+                                  Heading={'h2'}
+                                  classname='forgetemailheading'
+                                  text='forget your email'
+                                />
+                                <Input 
+                                  style={{width:'100%'}} 
+                                  type='email'
+                                  name='forgotemail' 
+                                  id= 'forgotemail' 
+                                  placeholder='Enter your email' 
+                                  label='Forget Email Address' 
+                                  variant='outlined' 
+                                  onChange={(e)=>setforgetemail(e.target.value)}
+                                /> 
+                                <Paragraph style={{color: 'red'}} text={forgetemailerror} />
                               </div>
                               <Button className='updatepass' onClick={handleresetpass} text='Reset password' />
                               <RxCross2 onClick={()=>setOpen(false)} style={{position: 'absolute', top: '10px', right: '10px', fontSize: '20px', cursor: 'pointer'}} />
@@ -267,37 +264,6 @@ const Login = () => {
                 <Image src={loginImg} alt= 'image' classname= 'img' />
               </div>
             </Grid>
-            {/* <div style={{position: 'relative',}}>
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                >
-                <Box sx={style}>
-                  <div style={{marginTop: '20px'}}>
-                    <Heading 
-                      Heading={'h2'}
-                      classname='forgetemailheading'
-                      text='forget your email'
-                    />
-                    <Input 
-                      style={{width:'100%'}} 
-                      type='email'
-                      name='forgotemail' 
-                      id= 'forgotemail' 
-                      placeholder='Enter your email' 
-                      label='Forget Email Address' 
-                      variant='outlined' 
-                      onChange={(e)=>setforgetemail(e.target.value)}
-                    /> 
-                    <Paragraph style={{color: 'red'}} text={forgetemailerror} />
-                  </div>
-                  <Button className='updatepass' onClick={handleresetpass} text='Reset password' />
-                  <RxCross2 onClick={()=>setOpen(false)} style={{position: 'absolute', top: '10px', right: '10px', fontSize: '20px', cursor: 'pointer'}} />
-                </Box>
-              </Modal>
-            </div> */}
         </Grid>
       </Box>
     </>
