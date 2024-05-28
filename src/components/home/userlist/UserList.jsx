@@ -3,7 +3,8 @@ import './userlist.css'
 
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import Heading from '../../utilities/Heading';
-import { getDatabase, ref, onValue, set, push } from "firebase/database";
+import Paragraph from '../../utilities/Paragraph'
+import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
 import { useSelector } from 'react-redux';
 import Button from '../../utilities/Button';
 
@@ -34,9 +35,9 @@ const UserList = () => {
         onValue(frndReqsRef, (snapshot) => {
           let arr = []
           snapshot.forEach((item)=>{
-            arr.push({...item.val(), id: item.key})
-            // if(item.key != userdata.uid){
-            // }
+            if(item.val().reqsentId == item.val().reqsentId){
+              arr.push(item.val().reqreceiveId + item.val().reqsentId)
+            }
           })
           setFrndReqList(arr)
         });
@@ -53,6 +54,14 @@ const UserList = () => {
             reqreceiveName: reqinfo.displayName,
         })
       }
+
+      // Friend Request cancel operation
+      // const handleReqCancel = (item) => {
+      //   console.log('askf')
+      //   if(item.reqreceiveId == item.reqsentId){
+      //     remove(ref(db, 'Requestlist' + item.id))
+      //   }
+      // }
 
 
   return (
@@ -76,15 +85,25 @@ const UserList = () => {
                                 classname= 'usernameheading'
                                 text= {item.displayName}
                             />
-                            <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', columnGap: '10px'}}>
-                                <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
-                                <Button className= 'userlistBtn' text= 'Remove'/>
-                            </div>
+                            <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
+                            {
+                              frndReqList.includes(userdata.uid + item.id)  || frndReqList.includes(item.id + userdata.uid) 
+                              ?
+                              <Button className= 'userlistBtn' style={{width: '250px', marginTop: '10px'}} text= 'cancel'/>
+                              :
+                              <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', columnGap: '10px'}}>
+                                  <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
+                                  <Button className= 'userlistBtn' text= 'Remove'/>
+                              </div>
+                            }
+                            {
+                              console.log(item)
+                            }
                         </div>
                     </div>
                 </div>
             ))
-            }
+          }
         </div>
     </section>
   )
