@@ -6,12 +6,16 @@ import Paragraph from '../../utilities/Paragraph'
 import Button from '../../utilities/Button'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { Alert } from '@mui/material'
+import { cancelReqData } from '../../../slices/cancelReqSlice'
 
 const FriendReq = () => {
     const db = getDatabase()
-    const userdata = useSelector((state) => state.loginUser.value) // who login ...
+    const userdata = useSelector((state) => state.loginUser.value); // who login ...
+    const dispatch = useDispatch();
     const [reqlist, setReqlist] = useState([])
+    const [cancelReq, setCancelReq] = useState([])
 
     // friend request operation
     useEffect(()=>{
@@ -19,26 +23,43 @@ const FriendReq = () => {
         onValue(requestRef, (snapshot) => {
           let arr = []
           snapshot.forEach((item)=>{
-            if(userdata.uid == item.val().reqreceiveId){
+            if(userdata.uid == item.val().reqreceiveId){  // req receive korlei shudu reqlist a dekhano hoi tai item.val().reqreceiveId deuya hoice ...
                 arr.push({...item.val(), id: item.key})
             }
           })
           setReqlist(arr)
         });
       },[])
+   
+      // friend request cancel from userlist ....
+    useEffect(()=>{
+        const requestRef = ref(db, 'Requestlist');
+        onValue(requestRef, (snapshot) => {
+          let arr = []
+          snapshot.forEach((item)=>{
+            if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){
+                arr.push({...item.val(), id: item.key})
+            }
+          })
+          setCancelReq(arr)
+        });
+    },[])
+    dispatch(cancelReqData(cancelReq))
+
+    console.log(cancelReq);
+
 
       // Friend Request confirm operation ...
        const handleReqConfirm = (confirminfo) => {
-            console.log(confirminfo)
-            set(push(ref(db, 'friends')), {
-                reqsentId: confirminfo.reqsentId,
-                reqsentEmail: confirminfo.reqsentEmail,
-                reqsentName: confirminfo.reqsentName,
-                reqreceiveId: confirminfo.reqreceiveId,
-                reqreceiveEmail: confirminfo.reqreceiveEmail,
-                reqreceiveName: confirminfo.reqreceiveName,
-            }).then(()=>{
-                remove(ref(db, 'Requestlist/' + confirminfo.id))
+            remove(ref(db, 'Requestlist/' + confirminfo.id)).then(()=> {
+                set(push(ref(db, 'friends')), {
+                    reqsentId: confirminfo.reqsentId,
+                    reqsentEmail: confirminfo.reqsentEmail,
+                    reqsentName: confirminfo.reqsentName,
+                    reqreceiveId: confirminfo.reqreceiveId,
+                    reqreceiveEmail: confirminfo.reqreceiveEmail,
+                    reqreceiveName: confirminfo.reqreceiveName,
+                })
             })
        }
 
@@ -58,24 +79,28 @@ const FriendReq = () => {
             <HiOutlineDotsVertical className='reqicon' />
         </div>
         <div className='reqItemBox'>    
-        {reqlist.map((item, index) => (
-            <div key={index} className='reqlistItem'>
-                <div style={{display: 'flex', alignItems: 'center', columnGap: '30px',}}>
-                    <div className='reqImgbox'></div>
-                    <div>
-                        <Heading 
-                            Heading={'h4'}
-                            classname= 'usernameheading'
-                            text= {item.reqsentName}
-                        />
-                        <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', columnGap: '10px'}}>
-                            <Button onClick={()=>handleReqConfirm(item)} className= 'reqlistBtn' text= 'confirm'/>
-                            <Button onClick={()=>handleReqCancel(item)} className= 'reqlistBtn' text= 'cancel'/>
+        {reqlist.length > 0 ?
+            reqlist.map((item, index) => (
+                <div key={index} className='reqlistItem'>
+                    <div style={{display: 'flex', alignItems: 'center', columnGap: '30px',}}>
+                        <div className='reqImgbox'></div>
+                        <div>
+                            <Heading 
+                                Heading={'h4'}
+                                classname= 'usernameheading'
+                                text= {item.reqsentName}
+                            />
+                            <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
+                            <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', columnGap: '10px'}}>
+                                <Button onClick={()=>handleReqConfirm(item)} className= 'reqlistBtn' text= 'confirm'/>
+                                <Button onClick={()=>handleReqCancel(item)} className= 'reqlistBtn' text= 'cancel'/>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        ))
+            ))
+            :
+            <Alert severity="info">No Request Found.</Alert>
         }
         </div>
     </section>

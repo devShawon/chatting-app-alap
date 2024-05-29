@@ -5,15 +5,17 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import Heading from '../../utilities/Heading';
 import Paragraph from '../../utilities/Paragraph'
 import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '../../utilities/Button';
 
 const UserList = () => {
 
     const db = getDatabase();
-    const userdata = useSelector((state) => state.loginUser.value) // who login ...
+    const userdata = useSelector((state) => state.loginUser.value); // who login ...
+    const cancelreqinfo = useSelector((state) => state.reqCancel.value); 
     const [userList, setUserList] = useState([])
     const [frndReqList, setFrndReqList] = useState([])
+    const [friends, setFriends] = useState([])
 
     // All userlist operation ...
     useEffect(()=>{
@@ -35,11 +37,25 @@ const UserList = () => {
         onValue(frndReqsRef, (snapshot) => {
           let arr = []
           snapshot.forEach((item)=>{
-            if(item.val().reqsentId == item.val().reqsentId){
+            if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){ 
               arr.push(item.val().reqreceiveId + item.val().reqsentId)
             }
           })
           setFrndReqList(arr)
+        });
+      },[])
+    
+      // All friends List ...
+    useEffect(()=>{
+        const friendsRef = ref(db, 'friends');
+        onValue(friendsRef, (snapshot) => {
+          let arr = []
+          snapshot.forEach((item)=>{
+            if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){ 
+              arr.push(item.val().reqreceiveId + item.val().reqsentId)
+            }
+          })
+          setFriends(arr)
         });
       },[])
 
@@ -56,12 +72,12 @@ const UserList = () => {
       }
 
       // Friend Request cancel operation
-      // const handleReqCancel = (item) => {
-      //   console.log('askf')
-      //   if(item.reqreceiveId == item.reqsentId){
-      //     remove(ref(db, 'Requestlist' + item.id))
-      //   }
-      // }
+      const handleReqCancel = () => {
+        console.log('cancel');
+        remove(ref(db, 'Requestlist/' + cancelreqinfo))
+      }
+
+      console.log(cancelreqinfo);
 
 
   return (
@@ -89,15 +105,13 @@ const UserList = () => {
                             {
                               frndReqList.includes(userdata.uid + item.id)  || frndReqList.includes(item.id + userdata.uid) 
                               ?
-                              <Button className= 'userlistBtn' style={{width: '250px', marginTop: '10px'}} text= 'cancel'/>
+                              <Button onClick={handleReqCancel} className= 'cancelBtn' text= 'cancel'/>
                               :
-                              <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', columnGap: '10px'}}>
-                                  <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
-                                  <Button className= 'userlistBtn' text= 'Remove'/>
-                              </div>
-                            }
-                            {
-                              console.log(item)
+                                friends.includes(userdata.uid + item.id) || friends.includes(item.id + userdata.uid)
+                                ?
+                                <Button disabled={'disabled'} className= 'friendBtn' text= 'Friend'/>
+                                :
+                                <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
                             }
                         </div>
                     </div>
