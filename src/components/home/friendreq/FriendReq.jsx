@@ -15,7 +15,7 @@ const FriendReq = () => {
     const userdata = useSelector((state) => state.loginUser.value); // who login ...
     const dispatch = useDispatch();
     const [reqlist, setReqlist] = useState([])
-    const [cancelReq, setCancelReq] = useState([])
+    // const [cancelReq, setCancelReq] = useState([])
 
     // friend request operation
     useEffect(()=>{
@@ -32,33 +32,30 @@ const FriendReq = () => {
       },[])
    
       // friend request cancel from userlist ....
-    useEffect(()=>{
-        const requestRef = ref(db, 'Requestlist');
-        onValue(requestRef, (snapshot) => {
-          let arr = []
-          snapshot.forEach((item)=>{
-            if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){
-                arr.push({...item.val(), id: item.key})
-            }
-          })
-          setCancelReq(arr)
-        });
-    },[])
-    dispatch(cancelReqData(cancelReq))
-
-    console.log(cancelReq);
-
+    // useEffect(()=>{
+    //     const requestRef = ref(db, 'Requestlist');
+    //     onValue(requestRef, (snapshot) => {
+    //       let arr = []
+    //       snapshot.forEach((item)=>{
+    //         if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){
+    //             arr.push({...item.val(), id: item.key})
+    //         }
+    //       })
+    //       setCancelReq(arr)
+    //     });
+    // },[])
+    // dispatch(cancelReqData(cancelReq))
 
       // Friend Request confirm operation ...
        const handleReqConfirm = (confirminfo) => {
             remove(ref(db, 'Requestlist/' + confirminfo.id)).then(()=> {
                 set(push(ref(db, 'friends')), {
-                    reqsentId: confirminfo.reqsentId,
-                    reqsentEmail: confirminfo.reqsentEmail,
-                    reqsentName: confirminfo.reqsentName,
-                    reqreceiveId: confirminfo.reqreceiveId,
-                    reqreceiveEmail: confirminfo.reqreceiveEmail,
-                    reqreceiveName: confirminfo.reqreceiveName,
+                    senderId: confirminfo.reqsentId,
+                    senderEmail: confirminfo.reqsentEmail,
+                    senderName: confirminfo.reqsentName,
+                    receiverId: confirminfo.reqreceiveId,
+                    receiverEmail: confirminfo.reqreceiveEmail,
+                    receiverName: confirminfo.reqreceiveName,
                 })
             })
        }

@@ -7,6 +7,7 @@ import Paragraph from '../../utilities/Paragraph'
 import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '../../utilities/Button';
+import { Skeleton } from '@mui/material';
 
 const UserList = () => {
 
@@ -18,7 +19,7 @@ const UserList = () => {
     const [friends, setFriends] = useState([])
 
     // All userlist operation ...
-    useEffect(()=>{
+    useEffect(()=>{ // users database theke data uthaye neuya hoyche ..
         const usersRef = ref(db, 'users');
         onValue(usersRef, (snapshot) => {
           let arr = []
@@ -32,7 +33,7 @@ const UserList = () => {
       },[])
 
     // All FriendReq List operation ...
-    useEffect(()=>{
+    useEffect(()=>{ // Requestlist database theke data uthaye neuya hoyche ..
         const frndReqsRef = ref(db, 'Requestlist');
         onValue(frndReqsRef, (snapshot) => {
           let arr = []
@@ -46,13 +47,13 @@ const UserList = () => {
       },[])
     
       // All friends List ...
-    useEffect(()=>{
+    useEffect(()=>{  // friends database theke data uthaye neuya hoyche ..
         const friendsRef = ref(db, 'friends');
         onValue(friendsRef, (snapshot) => {
           let arr = []
           snapshot.forEach((item)=>{
-            if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){ 
-              arr.push(item.val().reqreceiveId + item.val().reqsentId)
+            if(userdata.uid == item.val().receiverId || userdata.uid == item.val().senderId){ 
+              arr.push(item.val().receiverId + item.val().senderId)
             }
           })
           setFriends(arr)
@@ -72,13 +73,10 @@ const UserList = () => {
       }
 
       // Friend Request cancel operation
-      const handleReqCancel = () => {
-        console.log('cancel');
-        remove(ref(db, 'Requestlist/' + cancelreqinfo))
-      }
-
-      console.log(cancelreqinfo);
-
+      // const handleReqCancel = () => {
+      //   console.log('cancel');
+      //   remove(ref(db, 'Requestlist/' + cancelreqinfo))
+      // }
 
   return (
     <section className='userlist'>
@@ -94,24 +92,45 @@ const UserList = () => {
             { userList.map((item, index) => (
                 <div key={index} className='userlistItem'>
                     <div style={{display: 'flex', alignItems: 'center', columnGap: '30px',}}>
-                        <div className='userImgbox'></div>
+                        {
+                          userdata ?
+                          <div className='userImgbox'></div>
+                            :
+                          <Skeleton variant="circular" width={50} height={50} />
+                        }
                         <div>
-                            <Heading 
-                                Heading={'h4'}
-                                classname= 'usernameheading'
-                                text= {item.displayName}
-                            />
-                            <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
+                          {
+                            !userdata ?
+                            <Skeleton variant="rounded" width={210} height={60} />
+                              :
+                            <div>
+                              <Heading 
+                                  Heading={'h4'}
+                                  classname= 'usernameheading'
+                                  text= {item.displayName}
+                              />
+                              <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
+                            </div>
+                          }
                             {
                               frndReqList.includes(userdata.uid + item.id)  || frndReqList.includes(item.id + userdata.uid) 
                               ?
-                              <Button onClick={handleReqCancel} className= 'cancelBtn' text= 'cancel'/>
+                               !userdata ?
+                                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                                  :
+                                <Button className= 'cancelBtn' text= 'cancel'/>
                               :
                                 friends.includes(userdata.uid + item.id) || friends.includes(item.id + userdata.uid)
                                 ?
-                                <Button disabled={'disabled'} className= 'friendBtn' text= 'Friend'/>
+                                  !userdata ?
+                                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                                    :
+                                  <Button disabled={'disabled'} className= 'friendBtn' text= 'Friend'/>
                                 :
-                                <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
+                                !userdata ?
+                                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                                  :
+                                  <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
                             }
                         </div>
                     </div>

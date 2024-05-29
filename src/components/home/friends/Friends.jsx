@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Heading from '../../utilities/Heading'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import Button from '../../utilities/Button'
-import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
+import { getDatabase, ref, onValue, remove, set, push } from "firebase/database";
 import { useSelector } from 'react-redux';
 import Paragraph from '../../utilities/Paragraph';
 import { Alert } from '@mui/material';
@@ -13,18 +13,50 @@ const Friends = () => {
     const [friendlist, setFriendlist] = useState([])
 
     // friend list ..
-    useEffect(()=>{
+    useEffect(()=>{   // friends database theke data uthaye neuya hoyche ..
         const friendsRef = ref(db, 'friends');
         onValue(friendsRef, (snapshot) => {
           let arr = []
           snapshot.forEach((item)=>{
-            if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){
+            if(userdata.uid == item.val().receiverId || userdata.uid == item.val().senderId){
               arr.push({...item.val(), id: item.key})
             }
           })
           setFriendlist(arr)
         });
       },[])
+
+      // unfriend operation here ..
+      const handleUnfriend = (frndinfo) => {
+        if(userdata.uid == frndinfo.senderId || userdata.uid == frndinfo.receiverId){
+            remove(ref(db, 'friends/' + frndinfo.id))
+        }
+      }
+
+      // friend block operation here ..
+      const handleBlock = (blocklist) => {
+        remove(ref(db, 'friends/' + blocklist.id)).then(()=>{
+            if(userdata.uid == blocklist.senderId){
+                set(push(ref(db, 'blocklist')), {
+                    givenBlockId: blocklist.senderId,
+                    givenBlockEmail: blocklist.senderEmail,
+                    givenBlockName: blocklist.senderName,
+                    takenBlockId: blocklist.receiverId,
+                    takenBlockEmail: blocklist.receiverEmail,
+                    takenBlockName: blocklist.receiverName
+                })
+            }else {
+                set(push(ref(db, 'blocklist')), {
+                    givenBlockId: blocklist.receiverId,
+                    givenBlockEmail: blocklist.receiverEmail,
+                    givenBlockName: blocklist.receiverName,
+                    takenBlockId: blocklist.senderId,
+                    takenBlockEmail: blocklist.senderEmail,
+                    takenBlockName: blocklist.senderName
+                })
+            }
+        })
+      }
 
   return (
     <section className='reqList'>
@@ -47,23 +79,23 @@ const Friends = () => {
                                 Heading={'h4'}
                                 classname= 'usernameheading'
                                 text= {
-                                    userdata.uid == item.reqsentId ?
-                                        item.reqreceiveName
+                                    userdata.uid == item.senderId ?
+                                        item.receiverName
                                             :
-                                        item.reqsentName
+                                        item.senderName
                                 }
                             />
                             <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
                             <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', columnGap: '10px'}}>
-                                <Button className= 'reqlistBtn' text= 'unfriend'/>
-                                <Button className= 'reqlistBtn' text= 'block'/>
+                                <Button onClick={()=>handleUnfriend(item)} className= 'reqlistBtn' text= 'unfriend'/>
+                                <Button onClick={()=>handleBlock(item)} className= 'reqlistBtn' text= 'block'/>
                             </div>
                         </div>
                     </div>
                 </div>
             ))
             :
-            <Alert severity="info">This is an info Alert.</Alert>
+            <Alert severity="info">No friends found.</Alert>
         }
             
         </div>
