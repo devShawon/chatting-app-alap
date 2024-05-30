@@ -15,18 +15,20 @@ import Message from './pages/message/Message';
 import Notification from './pages/notification/Notification';
 import Settings from './pages/settings/Settings';
 import IsLogedinUser from './pages/privateRoutes/IsLogedinUser';
+import Profile from './pages/profile/Profile';
 
 const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-        <Route element={<IsLogedinUser />}>
+        <Route element={<IsLogedinUser />}>     // Private Route
           <Route element={<RootLayout />}>
               <Route path='/home' element={<Home />} />
               <Route path='/message' element={<Message />} />
               <Route path='/notification' element={<Notification />} />
               <Route path='/settings' element={<Settings />} />
+              <Route path='/profile/:id' element={<Profile />} />   // Dynamic Route
           </Route>
         </Route>
           <Route path='*' element={<Error />} />

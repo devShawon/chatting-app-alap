@@ -1,0 +1,80 @@
+.frndlistmain{
+    height: 100vh;
+}
+.frndarea{
+    cursor: pointer;
+    padding: 10px;
+}
+.frndarea:hover{
+    background-color: rgb(221, 221, 221);
+}
+.frndlistitembox{
+    height: 90vh;
+}
+.msgmain{
+    width: 60%;
+    background-color: aliceblue;
+    height: 100vh;
+}
+.msgheadingbox{
+    height: 80px;
+    background-color: var(--secondary);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.imgbox{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: yellowgreen;
+}
+.msgusername{
+    font-size: 20px;
+    font-family: var(--open);
+    color: white;
+}
+.msgsubheading{
+    font-size: 16px;
+    font-family: var(--open);
+    color: white;
+}
+.msgarea{
+    width: 100%;
+    background-color: rgb(48, 105, 155);
+    overflow-y: scroll;
+    height: 75%;
+}
+.bottombox{
+    width: 100%;
+    background-color: rebeccapurple;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+}
+.msginput{
+    width: 80%;
+    padding: 0px 30px;
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 50px;
+    height: 50px;
+    outline: none;
+    color: white;
+    font-size: 20px;
+}
+.msginput::placeholder{
+    color: rgba(255, 255, 255, 0.578);
+    font-size: 16px;
+}
+.sendbtn{
+    padding: 8px 16px;
+    background-color: blanchedalmond;
+    border-radius: 12px;
+    border: none;
+    color: rgb(0, 0, 0);
+    font-size: 22px;
+    margin-left: 20px;
+}

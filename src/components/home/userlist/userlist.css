@@ -43,8 +43,10 @@
     height: 1px;
 }
 .userlistItem:last-child{
-    position: static;
     margin-bottom: 0;
+}
+.userlistItem:last-child::after{
+    background-color: transparent;
 }
 .userImgbox{
     height: 70px;

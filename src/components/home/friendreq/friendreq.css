@@ -43,8 +43,10 @@
     height: 1px;
 }
 .reqlistItem:last-child{
-    position: static;
     margin-bottom: 0;
+}
+.reqlistItem:last-child::after{
+    background-color: transparent;
 }
 .reqImgbox{
     height: 70px;

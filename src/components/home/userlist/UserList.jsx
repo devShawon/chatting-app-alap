@@ -8,6 +8,7 @@ import { getDatabase, ref, onValue, set, push, remove } from "firebase/database"
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '../../utilities/Button';
 import { Skeleton } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const UserList = () => {
 
@@ -104,11 +105,13 @@ const UserList = () => {
                             <Skeleton variant="rounded" width={210} height={60} />
                               :
                             <div>
-                              <Heading 
-                                  Heading={'h4'}
-                                  classname= 'usernameheading'
-                                  text= {item.displayName}
-                              />
+                              <Link to={`/profile/${item.displayName}`}>
+                                <Heading 
+                                    Heading={'h4'}
+                                    classname= 'usernameheading'
+                                    text= {item.displayName}
+                                />
+                              </Link>
                               <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
                             </div>
                           }
