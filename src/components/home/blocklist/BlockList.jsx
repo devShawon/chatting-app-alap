@@ -3,7 +3,7 @@ import './blocklist.css'
 import Heading from '../../utilities/Heading'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import Button from '../../utilities/Button'
-import { getDatabase, ref, onValue, remove } from "firebase/database";
+import { getDatabase, ref, onValue, remove, } from "firebase/database";
 import { useSelector } from 'react-redux';
 import Paragraph from '../../utilities/Paragraph';
 import { Alert } from '@mui/material';
@@ -11,6 +11,7 @@ import { Alert } from '@mui/material';
 const BlockList = () => {
 
     const db = getDatabase();
+    const dbRef = ref(getDatabase());
     const userdata = useSelector((state) => state.loginUser.value) // who login ...
     const [blockfrnd, setBlockfrnd] = useState([])
 
@@ -29,12 +30,10 @@ const BlockList = () => {
     }, [])
 
     // unblock here ..
-    const handleblock = (blocklist) => {
-        console.log(blocklist);
+    const handleUnblock = (blocklist) => {
         remove(ref(db, 'blocklist/' + blocklist.id)).then(()=> {
-            console.log('unblock done');
-        })
 
+        })
     }
 
   return (
@@ -66,7 +65,7 @@ const BlockList = () => {
                             />
                             <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
                             <div style={{marginTop: '10px', display: 'flex', alignItems: 'center', columnGap: '10px'}}>
-                                <Button onClick={()=>handleblock(item)} className= 'blockBtn' text= 'unblock'/>
+                                <Button onClick={()=>handleUnblock(item)} className= 'blockBtn' text= 'unblock'/>
                             </div>
                         </div>
                     </div>

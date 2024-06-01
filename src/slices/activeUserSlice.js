@@ -4,17 +4,17 @@ const initialState = {
   value: null,
 }
 
-export const cancelReqSlice = createSlice({
+export const activeUserSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     
-    cancelReqData: (state, action) => {
+    msgUserValue: (state, action) => {
       state.value = action.payload
     },
   },
 })
 
-export const { cancelReqData } = cancelReqSlice.actions
+export const { msgUserValue } = activeUserSlice.actions
 
-export default cancelReqSlice.reducer
+export default activeUserSlice.reducer

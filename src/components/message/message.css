@@ -15,6 +15,7 @@
     width: 60%;
     background-color: aliceblue;
     height: 100vh;
+    position: relative;
 }
 .msgheadingbox{
     height: 80px;
@@ -44,7 +45,8 @@
     width: 100%;
     background-color: rgb(48, 105, 155);
     overflow-y: scroll;
-    height: 75%;
+    height: 75vh;
+    padding: 0px 30px;
 }
 .bottombox{
     width: 100%;
@@ -77,4 +79,30 @@
     color: rgb(0, 0, 0);
     font-size: 22px;
     margin-left: 20px;
+}
+.sendermsg{
+    margin-top: 10px;
+}
+.sendermsg p{
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    display: inline-block;
+    max-width: 80%;
+    font-family: var(--open);
+    font-size: 18px;
+}
+.receivermsg{
+    display: flex;
+    justify-content: end;
+    margin-top: 10px;
+}
+.receivermsg p{
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    display: inline-block;
+    max-width: 80%;
+    font-family: var(--open);
+    font-size: 18px;
 }

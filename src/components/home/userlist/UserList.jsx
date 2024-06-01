@@ -14,10 +14,10 @@ const UserList = () => {
 
     const db = getDatabase();
     const userdata = useSelector((state) => state.loginUser.value); // who login ...
-    const cancelreqinfo = useSelector((state) => state.reqCancel.value); 
     const [userList, setUserList] = useState([])
     const [frndReqList, setFrndReqList] = useState([])
     const [friends, setFriends] = useState([])
+    const [cancelReq, setCancelReq] = useState({})
 
     // All userlist operation ...
     useEffect(()=>{ // users database theke data uthaye neuya hoyche ..
@@ -33,8 +33,20 @@ const UserList = () => {
         });
       },[])
 
-    // All FriendReq List operation ...
-    useEffect(()=>{ // Requestlist database theke data uthaye neuya hoyche ..
+       // Friend Request sent operation ...
+       const handleRequest = (reqinfo) => {
+        set(push(ref(db, 'Requestlist')), {
+            reqsentId: userdata.uid,
+            reqsentEmail: userdata.email,
+            reqsentName: userdata.displayName,
+            reqreceiveId: reqinfo.id,
+            reqreceiveEmail: reqinfo.email,
+            reqreceiveName: reqinfo.displayName,
+        })
+      }
+
+    // All FriendReq List ...
+    useEffect(()=>{       // Requestlist database theke data uthaye neuya hoyche ..
         const frndReqsRef = ref(db, 'Requestlist');
         onValue(frndReqsRef, (snapshot) => {
           let arr = []
@@ -61,23 +73,24 @@ const UserList = () => {
         });
       },[])
 
-      // Friend Request sent operation ...
-      const handleRequest = (reqinfo) => {
-        set(push(ref(db, 'Requestlist')), {
-            reqsentId: userdata.uid,
-            reqsentEmail: userdata.email,
-            reqsentName: userdata.displayName,
-            reqreceiveId: reqinfo.id,
-            reqreceiveEmail: reqinfo.email,
-            reqreceiveName: reqinfo.displayName,
-        })
-      }
-
+       // All FriendReq List  ...
+      useEffect(()=>{       // Requestlist database theke data uthaye neuya hoyche ..
+        const frndReqsRef = ref(db, 'Requestlist');
+        onValue(frndReqsRef, (snapshot) => {
+          let arr = []
+          snapshot.forEach((item, index)=>{
+            if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){ 
+              arr.push({...item.val(), id: item.key})
+            }
+          })
+          setCancelReq(arr)
+        });
+      },[])
+      
       // Friend Request cancel operation
-      // const handleReqCancel = () => {
-      //   console.log('cancel');
-      //   remove(ref(db, 'Requestlist/' + cancelreqinfo))
-      // }
+      const handleReqCancel = () => {
+        remove(ref(db, 'Requestlist/' + cancelReq[0].id))
+      }
 
   return (
     <section className='userlist'>
@@ -121,7 +134,7 @@ const UserList = () => {
                                !userdata ?
                                   <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
                                   :
-                                <Button className= 'cancelBtn' text= 'cancel'/>
+                                <Button onClick={handleReqCancel} className= 'cancelBtn' text= 'cancel'/>
                               :
                                 friends.includes(userdata.uid + item.id) || friends.includes(item.id + userdata.uid)
                                 ?

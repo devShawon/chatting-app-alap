@@ -6,16 +6,13 @@ import Paragraph from '../../utilities/Paragraph'
 import Button from '../../utilities/Button'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Alert } from '@mui/material'
-import { cancelReqData } from '../../../slices/cancelReqSlice'
 
 const FriendReq = () => {
     const db = getDatabase()
     const userdata = useSelector((state) => state.loginUser.value); // who login ...
-    const dispatch = useDispatch();
     const [reqlist, setReqlist] = useState([])
-    // const [cancelReq, setCancelReq] = useState([])
 
     // friend request operation
     useEffect(()=>{
@@ -30,21 +27,6 @@ const FriendReq = () => {
           setReqlist(arr)
         });
       },[])
-   
-      // friend request cancel from userlist ....
-    // useEffect(()=>{
-    //     const requestRef = ref(db, 'Requestlist');
-    //     onValue(requestRef, (snapshot) => {
-    //       let arr = []
-    //       snapshot.forEach((item)=>{
-    //         if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){
-    //             arr.push({...item.val(), id: item.key})
-    //         }
-    //       })
-    //       setCancelReq(arr)
-    //     });
-    // },[])
-    // dispatch(cancelReqData(cancelReq))
 
       // Friend Request confirm operation ...
        const handleReqConfirm = (confirminfo) => {

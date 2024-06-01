@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import './message.css'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
-import Button from '../utilities/Button'
-import { getDatabase, ref, onValue, remove, set, push } from "firebase/database";
-import { useSelector } from 'react-redux';
+import { getDatabase, ref, onValue } from "firebase/database";
+import { useSelector, useDispatch } from 'react-redux';
 import Paragraph from '../utilities/Paragraph';
 import { Alert } from '@mui/material';
 import Heading from '../utilities/Heading';
+import { msgUserValue } from '../../slices/activeUserSlice';
 
 const MessageFrnd = () => {
 
     const db = getDatabase();
+    const dispatch = useDispatch();
     const userdata = useSelector((state) => state.loginUser.value) // who login ...
     const [friendlist, setFriendlist] = useState([])
 
@@ -28,6 +29,10 @@ const MessageFrnd = () => {
         });
       },[])
 
+      const handlemsgFrnds = (frndinfo) => {
+        dispatch(msgUserValue(frndinfo)) 
+    }
+
 
   return (
     <section className='reqList frndlistmain'>
@@ -42,7 +47,7 @@ const MessageFrnd = () => {
         <div className='reqItemBox frndlistitembox'>   
         {  friendlist.length > 0 ?
             friendlist.map((item, index)=> (
-                <div key={index} className='frndarea'>
+                <div onClick={()=>handlemsgFrnds(item)} key={index} className='frndarea'>
                     <div style={{display: 'flex', alignItems: 'center', columnGap: '30px',}}>
                         <div className='reqImgbox'></div>
                         <div>
