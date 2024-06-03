@@ -95,63 +95,63 @@ const UserList = () => {
   return (
     <section className='userlist'>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Heading 
-                Heading={'h3'}
-                classname= 'userlistHeading'
-                text= 'user list'
-            />
-            <HiOutlineDotsVertical className='userlistdotIcon' />
+          <Heading 
+            Heading={'h3'}
+            classname= 'userlistHeading'
+            text= 'user list'
+          />
+          <HiOutlineDotsVertical className='userlistdotIcon' />
         </div>
         <div className='userItemBox'>    
-            { userList.map((item, index) => (
-                <div key={index} className='userlistItem'>
-                    <div style={{display: 'flex', alignItems: 'center', columnGap: '30px',}}>
-                        {
-                          userdata ?
-                          <div className='userImgbox'></div>
-                            :
-                          <Skeleton variant="circular" width={50} height={50} />
-                        }
+          { userList.map((item, index) => (
+            <div key={index} className='userlistItem'>
+                <div style={{display: 'flex', alignItems: 'center', columnGap: '30px',}}>
+                    {
+                      userdata ?
+                      <div className='userImgbox'></div>
+                        :
+                      <Skeleton variant="circular" width={50} height={50} />
+                    }
+                    <div>
+                      {
+                        !userdata ?
+                        <Skeleton variant="rounded" width={210} height={60} />
+                          :
                         <div>
-                          {
-                            !userdata ?
-                            <Skeleton variant="rounded" width={210} height={60} />
-                              :
-                            <div>
-                              <Link to={`/profile/${item.displayName}`}>
-                                <Heading 
-                                    Heading={'h4'}
-                                    classname= 'usernameheading'
-                                    text= {item.displayName}
-                                />
-                              </Link>
-                              <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
-                            </div>
-                          }
-                            {
-                              frndReqList.includes(userdata.uid + item.id)  || frndReqList.includes(item.id + userdata.uid) 
-                              ?
-                               !userdata ?
-                                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                                  :
-                                <Button onClick={handleReqCancel} className= 'cancelBtn' text= 'cancel'/>
-                              :
-                                friends.includes(userdata.uid + item.id) || friends.includes(item.id + userdata.uid)
-                                ?
-                                  !userdata ?
-                                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                                    :
-                                  <Button disabled={'disabled'} className= 'friendBtn' text= 'Friend'/>
-                                :
-                                !userdata ?
-                                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                                  :
-                                  <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
-                            }
+                          <Link to={`/profile/${item.displayName}`}>
+                            <Heading 
+                                Heading={'h4'}
+                                classname= 'usernameheading'
+                                text= {item.displayName}
+                            />
+                          </Link>
+                          <Paragraph classname='userlistSubheading' text= 'Today, 8:56pm'/>
                         </div>
+                      }
+                        {
+                          frndReqList.includes(userdata.uid + item.id)  || frndReqList.includes(item.id + userdata.uid) 
+                          ?
+                            !userdata ?
+                              <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                              :
+                            <Button onClick={handleReqCancel} className= 'cancelBtn' text= 'cancel'/>
+                          :
+                            friends.includes(userdata.uid + item.id) || friends.includes(item.id + userdata.uid)
+                            ?
+                              !userdata ?
+                                <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                                :
+                              <Button disabled={'disabled'} className= 'friendBtn' text= 'Friend'/>
+                            :
+                            !userdata ?
+                              <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                              :
+                              <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
+                        }
                     </div>
                 </div>
-            ))
+            </div>
+          ))
           }
         </div>
     </section>

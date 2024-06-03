@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './auth.css'
 
 import Box from '@mui/material/Box';
@@ -56,6 +56,7 @@ const Login = () => {
 
   const auth = getAuth();
   const db = getDatabase();
+  const userdata = useSelector((state) => state.loginUser.value); // who login ...
   const navigate = useNavigate();
   const provider = new GoogleAuthProvider();
   const dispatch = useDispatch();
@@ -102,6 +103,16 @@ const Login = () => {
     },
   });
 
+  // Login kora thakle direct homepage show hbe ...
+  useEffect(()=> {
+    if(userdata){
+      navigate('/home')
+    }else{
+      navigate('/')
+    }
+  }, [])
+
+
   //sign with google function here..
   const handleGoogle = () => {
     signInWithPopup(auth, provider)
@@ -115,7 +126,7 @@ const Login = () => {
         }).then(() => {
           localStorage.setItem("loginUser", JSON.stringify(user))
           dispatch(userValue(user))
-          toast.success('Successfully Sign In...')
+          toast.success('Successfully Sign In ...')
           setTimeout(() => {
             navigate('/home')
           },1500)
