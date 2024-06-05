@@ -3,7 +3,7 @@ import './blocklist.css'
 import Heading from '../../utilities/Heading'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import Button from '../../utilities/Button'
-import { getDatabase, ref, onValue, remove, } from "firebase/database";
+import { getDatabase, ref, onValue, remove, set, push, } from "firebase/database";
 import { useSelector } from 'react-redux';
 import Paragraph from '../../utilities/Paragraph';
 import { Alert } from '@mui/material';
@@ -15,8 +15,8 @@ const BlockList = () => {
     const userdata = useSelector((state) => state.loginUser.value) // who login ...
     const [blockfrnd, setBlockfrnd] = useState([])
 
-    // block list here ..
-    useEffect(()=> {   // blocklist theke data uthaye neuya hoyeche ..
+    // block list here ...
+    useEffect(()=> {   // blocklist theke data uthaye neuya hoyeche ...
         const blockRef = ref(db, 'blocklist');
         onValue(blockRef, (snapshot) => {
           let arr = []
@@ -32,7 +32,14 @@ const BlockList = () => {
     // unblock here ..
     const handleUnblock = (blocklist) => {
         remove(ref(db, 'blocklist/' + blocklist.id)).then(()=> {
-
+            set(push(ref(db, 'friends')), {
+                senderId: blocklist.givenBlockId,
+                senderEmail: blocklist.givenBlockEmail,
+                senderName: blocklist.givenBlockName,
+                receiverId: blocklist.takenBlockId,
+                receiverEmail: blocklist.takenBlockEmail,
+                receiverName: blocklist.takenBlockName,
+            })
         })
     }
 

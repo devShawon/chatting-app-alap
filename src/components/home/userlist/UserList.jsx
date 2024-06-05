@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 const UserList = () => {
 
     const db = getDatabase();
+    const dispatch = useDispatch();
     const userdata = useSelector((state) => state.loginUser.value); // who login ...
     const [userList, setUserList] = useState([])
     const [frndReqList, setFrndReqList] = useState([])
@@ -26,7 +27,7 @@ const UserList = () => {
           let arr = []
           snapshot.forEach((item)=>{
             if(item.key != userdata.uid){
-                arr.push({...item.val(), id: item.key})
+              arr.push({...item.val(), id: item.key})
             }
           })
           setUserList(arr)
@@ -78,7 +79,7 @@ const UserList = () => {
         const frndReqsRef = ref(db, 'Requestlist');
         onValue(frndReqsRef, (snapshot) => {
           let arr = []
-          snapshot.forEach((item, index)=>{
+          snapshot.forEach((item)=>{
             if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){ 
               arr.push({...item.val(), id: item.key})
             }

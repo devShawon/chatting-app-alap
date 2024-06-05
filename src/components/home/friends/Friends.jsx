@@ -3,13 +3,13 @@ import Heading from '../../utilities/Heading'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 import Button from '../../utilities/Button'
 import { getDatabase, ref, onValue, remove, set, push } from "firebase/database";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Paragraph from '../../utilities/Paragraph';
 import { Alert } from '@mui/material';
 
 const Friends = () => {
     const db = getDatabase();
-    const userdata = useSelector((state) => state.loginUser.value) // who login ...
+    const userdata = useSelector((state) => state.loginUser.value) // who login ...    const requestData = useSelector((state) => state.requestData.value) 
     const [friendlist, setFriendlist] = useState([])
 
     // friend list ..
@@ -97,7 +97,6 @@ const Friends = () => {
             :
             <Alert severity="info">No friends found.</Alert>
         }
-            
         </div>
     </section>
   )
