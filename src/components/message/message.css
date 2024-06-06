@@ -43,7 +43,7 @@
 }
 .msgarea{
     width: 100%;
-    background-color: rgb(48, 105, 155);
+    background-color: white;
     overflow-y: scroll;
     height: 75vh;
     padding: 0px 30px;
@@ -79,27 +79,29 @@
     color: rgb(0, 0, 0);
     font-size: 22px;
     margin-left: 20px;
+    cursor: pointer;
 }
-.sendermsg{
+.receivermsg{
     margin-top: 10px;
 }
-.sendermsg p{
-    background-color: white;
-    padding: 5px 10px;
+.receivermsg p{
+    background-color: #f0f0f0;
+    padding: 8px 15px;
     border-radius: 8px;
     display: inline-block;
     max-width: 80%;
     font-family: var(--open);
     font-size: 18px;
 }
-.receivermsg{
+.sendermsg{
     display: flex;
     justify-content: end;
     margin-top: 10px;
 }
-.receivermsg p{
-    background-color: white;
-    padding: 5px 10px;
+.sendermsg p{
+    background-color: #0084ff;
+    color: white;
+    padding: 8px 15px;
     border-radius: 8px;
     display: inline-block;
     max-width: 80%;

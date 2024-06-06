@@ -2,11 +2,46 @@ import React, { useEffect, useState } from 'react'
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useSelector } from 'react-redux';
 import Heading from '../utilities/Heading';
+import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
 
 const MessageBox = () => {
 
+  const db = getDatabase();
   const userdata = useSelector((state) => state.loginUser.value); // who login ...
   const frndsdata = useSelector((state) => state.chatUser.value);
+  const [msgTxt, setMsgTxt] = useState('');
+  const [allMessage, setAllMessage] = useState([]);
+
+  // message write ...
+  const handleSendMsg = () => {
+    if(msgTxt != '') {
+      set(push(ref(db, 'messages')), {
+        senderId: userdata?.uid,
+        senderEmail: userdata?.email,
+        senderName: userdata?.displayName,
+        receiverId: frndsdata?.senderId == userdata.uid ? frndsdata?.receiverId : frndsdata?.senderId,
+        receiverEmail: frndsdata?.senderId == userdata.uid ? frndsdata?.receiverEmail : frndsdata?.senderEmail,
+        receiverName: frndsdata?.senderId == userdata.uid ? frndsdata?.receiverName : frndsdata?.senderName,
+        message: msgTxt,
+      })
+      setMsgTxt('')
+    }
+  }
+
+  // messages read operation ...
+  useEffect(()=>{ 
+    const messageRef = ref(db, 'messages');
+    onValue( messageRef, (snapshot) => {
+      let arr = []
+      let activeId = frndsdata?.senderId == userdata.uid ? frndsdata?.receiverId : frndsdata?.senderId
+      snapshot.forEach((item)=>{
+        if((item.val().senderId == userdata.uid && item.val().receiverId == activeId) || (item.val().senderId == activeId && item.val().receiverId == userdata.uid)){
+          arr.push({...item.val(), id: item.key})
+        }
+      })
+      setAllMessage(arr)
+    });
+  },[frndsdata])
 
   return (
     <>
@@ -30,28 +65,21 @@ const MessageBox = () => {
               <HiOutlineDotsVertical style={{color: 'white', fontSize: '30px'}} />
             </div>
             <div className='msgarea'>
-              <div className='sendermsg'>
-                <p>hi</p>
-              </div>
-              <div className='receivermsg'>
-                <p>hello</p>
-              </div>
-              <div className='sendermsg'>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias voluptatem fugit sint velit deserunt fuga, eius aspernatur minima aperiam vero fugiat, ducimus voluptate, blanditiis sequi incidunt quaerat et excepturi est dolor? Mollitia, hic, necessitatibus ea reiciendis accusamus quo ipsum eaque sit debitis eveniet sunt placeat tenetur corrupti dolore, consequuntur quod.</p>
-              </div>
-              <div className='receivermsg'>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis, in! Expedita quo vitae, ipsum veniam perferendis culpa maxime aperiam nobis!</p>
-              </div>
-              <div className='sendermsg'>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias voluptatem fugit sint velit deserunt fuga, eius aspernatur minima aperiam vero fugiat, ducimus voluptate, blanditiis sequi incidunt quaerat et excepturi est dolor? Mollitia, </p>
-              </div>
-              <div className='receivermsg'>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis, </p>
-              </div>
+              { allMessage.map((item, index) => (
+                item.senderId == userdata.uid ?
+                  <div className='sendermsg'>
+                    <p>{item.message}</p>
+                  </div>
+                    :
+                  <div className='receivermsg'>
+                    <p>{item.message}</p>
+                  </div>
+                ))
+              }
             </div>
             <div className='bottombox'>
-                <input type="text" className='msginput' placeholder='Enter your text' />
-                <button className='sendbtn'>send</button>
+                <input onChange={(e)=>setMsgTxt(e.target.value)} type="text" className='msginput' placeholder='Enter your text' value={msgTxt} />
+                <button onClick={handleSendMsg} className='sendbtn'>send</button>
             </div>
         </section>
           :

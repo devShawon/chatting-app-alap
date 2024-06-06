@@ -5,7 +5,7 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import Heading from '../../utilities/Heading';
 import Paragraph from '../../utilities/Paragraph'
 import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Button from '../../utilities/Button';
 import { Skeleton } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -13,12 +13,11 @@ import { Link } from 'react-router-dom';
 const UserList = () => {
 
     const db = getDatabase();
-    const dispatch = useDispatch();
     const userdata = useSelector((state) => state.loginUser.value); // who login ...
     const [userList, setUserList] = useState([])
     const [frndReqList, setFrndReqList] = useState([])
     const [friends, setFriends] = useState([])
-    const [cancelReq, setCancelReq] = useState({})
+    // const [cancelReq, setCancelReq] = useState({})
 
     // All userlist operation ...
     useEffect(()=>{ // users database theke data uthaye neuya hoyche ..

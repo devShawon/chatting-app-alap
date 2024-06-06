@@ -29,10 +29,8 @@ const MessageFrnd = () => {
         });
       },[])
 
-      console.log(friendlist);
-
       const handlemsgFrnds = (frndinfo) => {
-        dispatch(msgUserValue(frndinfo)) 
+        dispatch(msgUserValue(frndinfo))
     }
 
 
