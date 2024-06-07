@@ -47,14 +47,15 @@
     overflow-y: scroll;
     height: 75vh;
     padding: 0px 30px;
+    padding-bottom: 20px;
 }
 .bottombox{
     width: 100%;
     background-color: rebeccapurple;
-    height: 80px;
+    height: auto;
     display: flex;
     align-items: center;
-    padding: 0 50px;
+    padding: 20px 50px;
 }
 .msginput{
     width: 80%;

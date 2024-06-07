@@ -17,7 +17,7 @@ const UserList = () => {
     const [userList, setUserList] = useState([])
     const [frndReqList, setFrndReqList] = useState([])
     const [friends, setFriends] = useState([])
-    // const [cancelReq, setCancelReq] = useState({})
+    const [cancelReq, setCancelReq] = useState({})
 
     // All userlist operation ...
     useEffect(()=>{ // users database theke data uthaye neuya hoyche ..
