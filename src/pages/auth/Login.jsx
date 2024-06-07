@@ -135,7 +135,7 @@ const Login = () => {
         toast("Please Verify your Email..")
           signOut(auth).then(() => {
         }).catch((error) => {
-          
+          console.log(error);
         });
       }
     }).catch((error) => {

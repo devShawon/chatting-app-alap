@@ -93,9 +93,16 @@
     font-family: var(--open);
     font-size: 18px;
 }
+.receivermsg span{
+    font-family: var(--open);
+    font-size: 12px;
+    margin-left: 10px;
+}
 .sendermsg{
     display: flex;
     justify-content: end;
+    flex-direction: column;
+    align-items: end;
     margin-top: 10px;
 }
 .sendermsg p{
@@ -107,4 +114,18 @@
     max-width: 80%;
     font-family: var(--open);
     font-size: 18px;
+}
+.sendermsg span {
+    font-family: var(--open);
+    font-size: 12px;
+}
+.emojiBtn{
+    padding: 5px 15px;
+    background: transparent;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    margin-right: 20px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;
 }

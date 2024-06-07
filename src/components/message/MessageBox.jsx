@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useSelector } from 'react-redux';
 import Heading from '../utilities/Heading';
 import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
+import moment from 'moment/moment';
+import EmojiPicker from 'emoji-picker-react';
 
 const MessageBox = () => {
 
   const db = getDatabase();
   const userdata = useSelector((state) => state.loginUser.value); // who login ...
   const frndsdata = useSelector((state) => state.chatUser.value);
+  const emojiRef = useRef(null);
   const [msgTxt, setMsgTxt] = useState('');
   const [allMessage, setAllMessage] = useState([]);
+  const [emojiShow, setEmojiShow] = useState(false);
 
   // message write ...
   const handleSendMsg = () => {
@@ -23,6 +27,7 @@ const MessageBox = () => {
         receiverEmail: frndsdata?.senderId == userdata.uid ? frndsdata?.receiverEmail : frndsdata?.senderEmail,
         receiverName: frndsdata?.senderId == userdata.uid ? frndsdata?.receiverName : frndsdata?.senderName,
         message: msgTxt,
+        date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
       })
       setMsgTxt('')
     }
@@ -42,6 +47,18 @@ const MessageBox = () => {
       setAllMessage(arr)
     });
   },[frndsdata])
+
+  useEffect((event) => {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setEmojiShow(false);
+    }
+
+    // document.addEventListener('click', handleClickOutside);
+
+    // return () => {
+    //   document.removeEventListener('click', handleClickOutside);
+    // };
+  }, [emojiRef]);
 
   return (
     <>
@@ -69,15 +86,32 @@ const MessageBox = () => {
                 item.senderId == userdata.uid ?
                   <div className='sendermsg'>
                     <p>{item.message}</p>
+                    <span>
+                      {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+                    </span>
                   </div>
                     :
                   <div className='receivermsg'>
-                    <p>{item.message}</p>
+                    <div>
+                      <p>{item.message}</p>
+                    </div>
+                    <span>
+                      {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+                    </span>
                   </div>
                 ))
               }
             </div>
             <div className='bottombox'>
+                <div style={{position: 'relative'}}>
+                  <button className='emojiBtn' onClick={()=>setEmojiShow(!emojiShow)}>emoji</button>
+                  {
+                    emojiShow && 
+                    <div ref={emojiRef} style={{position: 'absolute', bottom: '40px', left: '-50px'}}>
+                    <EmojiPicker open={emojiShow} />
+                    </div>
+                  }
+                </div>
                 <input onChange={(e)=>setMsgTxt(e.target.value)} type="text" className='msginput' placeholder='Enter your text' value={msgTxt} />
                 <button onClick={handleSendMsg} className='sendbtn'>send</button>
             </div>
