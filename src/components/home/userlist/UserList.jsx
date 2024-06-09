@@ -17,7 +17,7 @@ const UserList = () => {
     const [userList, setUserList] = useState([])
     const [frndReqList, setFrndReqList] = useState([])
     const [friends, setFriends] = useState([])
-    const [cancelReq, setCancelReq] = useState({})
+    const [cancelReq, setCancelReq] = useState([])
 
     // All userlist operation ...
     useEffect(()=>{ // users database theke data uthaye neuya hoyche ..
@@ -34,7 +34,7 @@ const UserList = () => {
       },[])
 
        // Friend Request sent operation ...
-       const handleRequest = (reqinfo) => {
+       const handleRequest = (reqinfo, index) => {
         set(push(ref(db, 'Requestlist')), {
             reqsentId: userdata.uid,
             reqsentEmail: userdata.email,
@@ -82,14 +82,18 @@ const UserList = () => {
             if(userdata.uid == item.val().reqreceiveId || userdata.uid == item.val().reqsentId){ 
               arr.push({...item.val(), id: item.key})
             }
-          })
-          setCancelReq(arr)
+            })
+            setCancelReq(arr)
         });
       },[])
       
       // Friend Request cancel operation
-      const handleReqCancel = () => {
-        remove(ref(db, 'Requestlist/' + cancelReq[0].id))
+      const handleReqCancel = (reqinfo) => {
+        cancelReq.map((item)=> {
+          if(reqinfo.id == item.reqreceiveId){
+            remove(ref(db, 'Requestlist/' + item.id))
+          }
+        })
       }
 
   return (
@@ -134,7 +138,7 @@ const UserList = () => {
                             !userdata ?
                               <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
                               :
-                            <Button onClick={handleReqCancel} className= 'cancelBtn' text= 'cancel'/>
+                            <Button onClick={()=>handleReqCancel(item)} className= 'cancelBtn' text= 'cancel'/>
                           :
                             friends.includes(userdata.uid + item.id) || friends.includes(item.id + userdata.uid)
                             ?
@@ -146,7 +150,7 @@ const UserList = () => {
                             !userdata ?
                               <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
                               :
-                              <Button className= 'userlistBtn' onClick={()=>handleRequest(item)} text= 'Add friend'/>
+                              <Button className= 'userlistBtn' onClick={()=>handleRequest(item, index)} text= 'Add friend'/>
                         }
                     </div>
                 </div>
